@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["node"]
+  },
+  "include": [
+    "vite.config.ts",
+    "scripts/*",
+    "eslint.config.js",
+    "prettier.config.mjs",
+    "commitlint.config.mjs",
+    "typings/vite-plugin-eslint.d.ts"
+  ]
+}
