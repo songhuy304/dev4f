@@ -10,6 +10,8 @@ import {
 } from '@/shared/constant';
 import { cn } from '@/shared/lib/utils';
 import { Kbd } from './ui/kbd';
+import { usePinnedTools } from '@/shared/hooks';
+import { ButtonCopy } from './ui/button-copy';
 
 const PANEL_SIZE_CLASS: Record<ToolPanelSize, string> = {
   sm: 'w-[min(18rem,calc(100vw-4rem))]',
@@ -23,6 +25,7 @@ export function ToolPanel() {
   const match = useMatch('/tools/:toolId');
   const toolId = match?.params.toolId;
 
+  const { hasPinnedTool, togglePinnedTool } = usePinnedTools();
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
 
@@ -30,6 +33,7 @@ export function ToolPanel() {
   const title = navItem?.title ?? toolId ?? 'Tool';
   const size: ToolPanelSize = navItem?.size ?? 'md';
   const Icon = navItem?.icon;
+  const key = navItem?.key ?? '';
   const isFull = size === 'full';
 
   const outlet = useOutlet({ toolId, title, size, icon: Icon });
@@ -48,6 +52,12 @@ export function ToolPanel() {
         PANEL_SIZE_CLASS[size],
         isCollapsed ? 'right-14' : 'right-[calc(var(--sidebar-width)+0.5rem)]',
         isFull && 'left-2',
+
+        'animate-in',
+        'fade-in-4',
+        'slide-in-from-right-6',
+        'duration-400',
+        'ease-out',
       )}
     >
       <header
@@ -74,11 +84,14 @@ export function ToolPanel() {
             type="button"
             variant="ghost"
             size="icon-sm"
-            tooltip="Pin panel"
+            tooltip={hasPinnedTool(key) ? 'Unpin panel' : 'Pin panel'}
             className="text-muted-foreground"
-            aria-label="Pin panel"
+            aria-label={hasPinnedTool(key) ? 'Unpin panel' : 'Pin panel'}
+            onClick={() => togglePinnedTool(key)}
           >
-            <Pin className="size-3" />
+            <Pin
+              className={cn('size-4', hasPinnedTool(key) && 'text-foreground')}
+            />
           </Button>
           <Button
             type="button"

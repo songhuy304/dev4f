@@ -24,6 +24,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { NavGroup } from '@/shared/constant';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -679,6 +681,94 @@ function SidebarMenuSubButton({
       )}
       {...props}
     />
+  );
+}
+
+type SidebarNavGroupProps = {
+  group: NavGroup;
+  isOpen: boolean;
+  onToggle: () => void;
+};
+
+export function SidebarNavGroup({
+  group,
+  isOpen,
+  onToggle,
+}: SidebarNavGroupProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const items = group.items ?? [];
+
+  if (!items.length) {
+    return null;
+  }
+
+  const handleToolClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    url: string,
+  ) => {
+    if (location.pathname === url) {
+      event.preventDefault();
+      navigate('/');
+    }
+  };
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        onClick={onToggle}
+        className="flex items-center justify-between font-medium"
+      >
+        <span className="truncate text-[10px] text-sidebar-foreground/50 uppercase">
+          {group.title}
+        </span>
+
+        <ChevronLeft
+          className={`
+            size-4
+            text-sidebar-foreground/50
+            transition-transform
+            duration-300
+            ${isOpen ? '-rotate-90' : ''}
+          `}
+        />
+      </SidebarMenuButton>
+
+      <div
+        className={`
+          grid
+          transition-[grid-template-rows]
+          duration-300
+          ease-in-out
+          ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
+        `}
+      >
+        <div className="overflow-hidden">
+          <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
+            {items.map((item) => {
+              const isActive = location.pathname === item.url;
+              const Icon = item.icon;
+
+              return (
+                <SidebarMenuSubItem key={item.key}>
+                  <SidebarMenuSubButton asChild isActive={isActive}>
+                    <NavLink
+                      to={item.url}
+                      onClick={(event) => handleToolClick(event, item.url)}
+                      className="gap-2 text-xs text-sidebar-foreground/80"
+                    >
+                      <Icon className="size-3.5 shrink-0" />
+                      <span className="truncate">{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
+          </SidebarMenuSub>
+        </div>
+      </div>
+    </SidebarMenuItem>
   );
 }
 

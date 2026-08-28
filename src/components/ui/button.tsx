@@ -39,6 +39,12 @@ const buttonVariants = cva(
   },
 );
 
+type ButtonProps = React.ComponentProps<'button'> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    tooltip?: string;
+  };
+
 function Button({
   className,
   variant = 'default',
@@ -46,11 +52,7 @@ function Button({
   tooltip,
   asChild = false,
   ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-    tooltip?: string;
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot.Root : 'button';
   return tooltip ? (
     <Tooltip>
@@ -77,4 +79,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button, buttonVariants, type ButtonProps };
