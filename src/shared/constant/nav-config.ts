@@ -16,7 +16,7 @@ import {
 
 import { PATHS } from './path';
 
-export type ToolPanelSize = 'sm' | 'md' | 'lg' | 'full';
+export type ToolPanelSize = 'sm' | 'md' | 'lg' | '2lg' | 'full';
 
 export type NavItem = {
   key: string;
@@ -53,7 +53,7 @@ export const NAV_CONFIG: {
           title: 'Timestamp Converter',
           url: `/${PATHS.TIMESTAMP}`,
           icon: CalendarClock,
-          size: 'md',
+          size: '2lg',
         },
         {
           key: 'page-speed',

@@ -6,7 +6,7 @@ import { cn } from '@/shared/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 
 const buttonVariants = cva(
-  "cursor-pointer transition-all duration-200 active:scale-[0.90] hover:scale-[1.08] ease-out inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "cursor-pointer transition-all duration-200 active:scale-[0.90] ease-out inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -43,6 +43,7 @@ type ButtonProps = React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     tooltip?: string;
+    isLoading?: boolean;
   };
 
 function Button({
@@ -51,6 +52,7 @@ function Button({
   size = 'default',
   tooltip,
   asChild = false,
+  isLoading = false,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot.Root : 'button';
@@ -61,6 +63,7 @@ function Button({
           data-slot="button"
           data-variant={variant}
           data-size={size}
+          data-loading={isLoading}
           className={cn(buttonVariants({ variant, size, className }))}
           {...props}
         />
@@ -73,6 +76,7 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      data-loading={isLoading}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

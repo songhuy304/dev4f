@@ -72,7 +72,7 @@ const ButtonCopy = ({ content, text = 'Copy', ...props }: ButtonCopyProps) => {
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.15 }}
             whileHover="hover"
-            className="inline-flex items-center gap-1.5 text-foreground"
+            className="inline-flex items-center gap-1.5"
           >
             <MotionCopyIcon
               className="size-3.5"

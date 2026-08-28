@@ -10,10 +10,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 const typographyVariants = cva('', {
   variants: {
     variant: {
-      h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
-      h2: 'scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight',
-      h3: 'scroll-m-20 text-2xl font-semibold tracking-tight',
-      h4: 'scroll-m-20 text-xl font-semibold tracking-tight',
+      h1: 'text-4xl font-extrabold tracking-tight lg:text-5xl',
+      h2: 'text-3xl font-semibold tracking-tight',
+      h3: 'text-2xl font-semibold tracking-tight',
+      h4: 'text-xl font-semibold tracking-tight',
       p: 'leading-7',
       lead: 'text-xl text-muted-foreground',
       large: 'text-lg font-semibold',
@@ -48,7 +48,7 @@ interface TypographyProps
     VariantProps<typeof typographyVariants> {
   copy?: boolean;
   ellipsis?: boolean;
-  tooltip?: boolean;
+  tooltip?: string;
 }
 
 function Typography({
@@ -56,7 +56,7 @@ function Typography({
   variant = 'p',
   copy = false,
   ellipsis = false,
-  tooltip = false,
+  tooltip,
   children,
   ...props
 }: TypographyProps) {
@@ -114,13 +114,13 @@ function Typography({
     </Component>
   );
 
-  if (ellipsis && tooltip && text) {
+  if (ellipsis && tooltip) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>{content}</TooltipTrigger>
 
         <TooltipContent>
-          <p className="max-w-sm break-all">{text}</p>
+          <p className="break-all">{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     );
