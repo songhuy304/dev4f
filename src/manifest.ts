@@ -3,7 +3,7 @@ import { defineManifest } from '@crxjs/vite-plugin';
 export default defineManifest({
   manifest_version: 3,
 
-  name: 'My Extension',
+  name: 'DevKit',
   version: '1.0.0',
 
   permissions: ['activeTab', 'scripting'],
@@ -31,17 +31,13 @@ export default defineManifest({
   ],
 
   icons: {
-    16: 'icons/icon-16.png',
-    48: 'icons/icon-48.png',
-    128: 'icons/icon-128.png',
+    16: 'icon.svg',
+    48: 'icon.svg',
+    128: 'icon.svg',
   },
 
   action: {
     default_title: 'Open Extension',
-    default_icon: {
-      16: 'icons/icon-16.png',
-      48: 'icons/icon-48.png',
-      128: 'icons/icon-128.png',
-    },
+    default_icon: 'icon.svg',
   },
 });

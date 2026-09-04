@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/shared/constant';
 import { cn } from '@/shared/lib/utils';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -43,7 +44,7 @@ const Logo: React.FC<LogoProps> = ({
             fill="#FF5629"
           />
         </svg>
-        {withText && <span className="ml-4 text-xs font-bold"></span>}
+        {withText && <span className="ml-4 text-xs font-bold">{APP_NAME}</span>}
       </Link>
     </div>
   );
