@@ -20,4 +20,5 @@ export const PATHS = {
   JWT_DECODER: `${TOOLS_PATH}/jwt-decoder`,
   TIMESTAMP: `${TOOLS_PATH}/timestamp`,
   PAGE_SPEED: `${TOOLS_PATH}/page-speed`,
+  MARKDOWN_PREVIEW: `${TOOLS_PATH}/markdown-preview`,
 };

@@ -1,4 +1,3 @@
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Label } from '@/components/ui/label';
@@ -8,6 +7,7 @@ import { TimestampResult, timestampToDate } from '@/shared/utils';
 import { MotionView } from '@/components/ui/motion-view';
 import { Description, DescriptionItem } from '@/components/ui/description';
 import { FieldDescription } from '@/components/ui/field';
+import { NumberInput } from '@/components/ui/input-number';
 
 const TimeConverter = () => {
   const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
@@ -24,11 +24,14 @@ const TimeConverter = () => {
       <div className="w-full space-y-2">
         <Label htmlFor="timestamp">Timestamp</Label>
         <ButtonGroup className="w-full">
-          <Input
-            id="timestamp"
+          <NumberInput
             placeholder="Enter timestamp"
             value={timestamp}
-            onChange={(e) => setTimestamp(Number(e.target.value))}
+            showControls={false}
+            className="w-full"
+            onValueChange={(value) => setTimestamp(value)}
+            min={0}
+            max={Number.MAX_SAFE_INTEGER}
           />
           <Button variant="default" onClick={handleConvert}>
             Convert

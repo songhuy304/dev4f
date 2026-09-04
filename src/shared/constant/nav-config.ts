@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+  Book,
   CalendarClock,
   Camera,
   Coins,
@@ -102,6 +103,14 @@ export const NAV_CONFIG: {
           url: `/${PATHS.LINK_SHORTENER}`,
           icon: Link,
           size: 'md',
+        },
+
+        {
+          key: 'markdown-preview',
+          title: 'Markdown Preview',
+          url: `/${PATHS.MARKDOWN_PREVIEW}`,
+          icon: Book,
+          size: 'full',
         },
       ],
     },
