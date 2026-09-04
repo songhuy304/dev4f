@@ -23,6 +23,6 @@
     }
   },
   "include": ["src/**/*", "typings"],
-  "exclude": ["node_modules", "dist", "coverage"],
+  "exclude": ["node_modules", "dist", "coverage", "src/manifest.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

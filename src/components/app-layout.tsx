@@ -11,7 +11,7 @@ function OverlayFrameSync() {
 
 const AppLayout = () => {
   return (
-    <SidebarProvider defaultOpen className="relative min-h-svh bg-transparent">
+    <SidebarProvider defaultOpen>
       <OverlayFrameSync />
       <ToolPanel />
       <AppSidebar />

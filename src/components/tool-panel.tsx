@@ -62,7 +62,6 @@ export function ToolPanel() {
           data-state="open"
           initial={{
             opacity: 0,
-            x: 24,
           }}
           animate={{
             opacity: 1,
@@ -70,10 +69,9 @@ export function ToolPanel() {
           }}
           exit={{
             opacity: 0,
-            x: 24,
           }}
           transition={{
-            duration: 0.3,
+            duration: 0.15,
           }}
           className={cn(
             'fixed top-2 bottom-2 z-20 flex flex-col overflow-hidden rounded-2xl border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-lg',
