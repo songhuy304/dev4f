@@ -1,4 +1,5 @@
 import {
+  EXT_COLLAPSED_FRAME,
   EXT_DEFAULT_FRAME_WIDTH,
   EXT_IFRAME_ID,
   EXT_MESSAGE,
@@ -8,13 +9,38 @@ function getIframe() {
   return document.getElementById(EXT_IFRAME_ID) as HTMLIFrameElement | null;
 }
 
-function applyFrameSize(iframe: HTMLIFrameElement, width: number, full?: boolean) {
+function applyFrameSize(
+  iframe: HTMLIFrameElement,
+  width: number,
+  options?: { full?: boolean; compact?: boolean },
+) {
+  const { full, compact } = options ?? {};
+
+  if (compact) {
+    const nextWidth = `${EXT_COLLAPSED_FRAME.width}px`;
+    iframe.dataset.width = nextWidth;
+    iframe.dataset.compact = '1';
+    Object.assign(iframe.style, {
+      width: nextWidth,
+      height: `${EXT_COLLAPSED_FRAME.height}px`,
+      top: '50%',
+      transform: 'translateY(-50%)',
+    });
+    return;
+  }
+
   const nextWidth = full
     ? '100vw'
     : `${Math.min(Math.max(width, 24), window.innerWidth)}px`;
 
   iframe.dataset.width = nextWidth;
-  iframe.style.width = nextWidth;
+  iframe.dataset.compact = '0';
+  Object.assign(iframe.style, {
+    width: nextWidth,
+    height: '100vh',
+    top: '0',
+    transform: 'none',
+  });
 }
 
 function createIframe() {
@@ -35,9 +61,11 @@ function createIframe() {
     background: 'transparent',
     colorScheme: 'none',
     display: 'block',
+    transform: 'none',
   });
 
   iframe.dataset.open = '1';
+  iframe.dataset.compact = '0';
   iframe.dataset.width = `${EXT_DEFAULT_FRAME_WIDTH}px`;
 
   document.documentElement.appendChild(iframe);
@@ -58,7 +86,15 @@ function setOverlayOpen(open: boolean) {
   const iframe = existing ?? createIframe();
   iframe.style.display = 'block';
   iframe.dataset.open = '1';
-  iframe.style.width = iframe.dataset.width || `${EXT_DEFAULT_FRAME_WIDTH}px`;
+
+  if (iframe.dataset.compact === '1') {
+    applyFrameSize(iframe, EXT_COLLAPSED_FRAME.width, { compact: true });
+  } else {
+    iframe.style.width = iframe.dataset.width || `${EXT_DEFAULT_FRAME_WIDTH}px`;
+    iframe.style.height = '100vh';
+    iframe.style.top = '0';
+    iframe.style.transform = 'none';
+  }
 }
 
 function toggleOverlay() {
@@ -87,9 +123,8 @@ window.addEventListener('message', (event) => {
     return;
   }
 
-  applyFrameSize(
-    iframe,
-    Number(event.data.width) || EXT_DEFAULT_FRAME_WIDTH,
-    event.data.full,
-  );
+  applyFrameSize(iframe, Number(event.data.width) || EXT_DEFAULT_FRAME_WIDTH, {
+    full: event.data.full,
+    compact: event.data.compact,
+  });
 });

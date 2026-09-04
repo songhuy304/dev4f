@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "pnpm version patch --no-git-tag-version && tsc && vite build",
     "preview": "vite preview",
     "analyzer": "tsc && cross-env ANALYZER=true vite build",
     "fix": "eslint --fix src/**/*.ts --fix  src/**/*.tsx",

@@ -6,3 +6,9 @@ export const EXT_MESSAGE = {
 } as const;
 
 export const EXT_DEFAULT_FRAME_WIDTH = 240;
+
+/** Collapsed rail button only — matches reopen control footprint. */
+export const EXT_COLLAPSED_FRAME = {
+  width: 33,
+  height: 70,
+} as const;

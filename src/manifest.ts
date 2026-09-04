@@ -1,10 +1,11 @@
 import { defineManifest } from '@crxjs/vite-plugin';
+import packageJson from '../package.json';
 
 export default defineManifest({
   manifest_version: 3,
 
   name: 'DevKit',
-  version: '1.0.0',
+  version: packageJson.version,
 
   permissions: ['activeTab', 'scripting'],
 
@@ -31,13 +32,13 @@ export default defineManifest({
   ],
 
   icons: {
-    16: 'icon.svg',
-    48: 'icon.svg',
-    128: 'icon.svg',
+    16: 'icons/icon-16.png',
+    48: 'icons/icon-48.png',
+    128: 'icons/icon-128.png',
   },
 
   action: {
     default_title: 'Open Extension',
-    default_icon: 'icon.svg',
+    default_icon: 'icons/icon-16.png',
   },
 });
