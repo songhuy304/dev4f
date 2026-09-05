@@ -142,7 +142,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-r-none relative',
+          '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none relative',
           className,
           !showControls && 'rounded-r-md',
         )}

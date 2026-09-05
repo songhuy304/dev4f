@@ -9,4 +9,11 @@ interface Currency {
 
 type CurrenciesResponse = Currency[];
 
-export type { Currency, CurrenciesResponse };
+interface Rate {
+  date: string;
+  base: string;
+  quote: string;
+  rate: number;
+}
+
+export type { Currency, CurrenciesResponse, Rate };

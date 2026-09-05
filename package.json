@@ -25,6 +25,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cn": "^0.2.4",
+    "country-flag-icons": "^1.6.20",
     "dayjs": "^1.11.23",
     "i18next": "^25.7.4",
     "i18next-browser-languagedetector": "^8.2.0",

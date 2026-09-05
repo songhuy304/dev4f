@@ -42,11 +42,9 @@
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
 
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.28 0 0);
   --card-foreground: oklch(0.985 0 0);
 
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
 
   --primary: oklch(0.65 0.18 265);
   --primary-foreground: oklch(0.985 0 0);
@@ -261,46 +259,60 @@
   :is(h1, h2, h3, h4) {
     @apply mt-4 mb-2 font-semibold first:mt-0;
   }
+
   h1 {
     @apply text-2xl;
   }
+
   h2 {
     @apply text-xl;
   }
+
   h3 {
     @apply text-lg;
   }
+
   p {
     @apply my-2;
   }
+
   ul {
     @apply my-2 list-disc pl-5;
   }
+
   ol {
     @apply my-2 list-decimal pl-5;
   }
+
   a {
     @apply text-primary underline underline-offset-2;
   }
+
   code {
     @apply rounded bg-muted px-1 py-0.5 font-mono text-[0.85em];
   }
+
   pre {
     @apply my-3 overflow-x-auto rounded-md bg-muted p-3;
   }
+
   pre code {
     @apply bg-transparent p-0;
   }
+
   blockquote {
     @apply my-2 border-l-2 border-border pl-3 text-muted-foreground;
   }
+
   table {
     @apply my-3 w-full border-collapse text-left;
   }
+
   th,
   td {
     @apply border border-border px-2 py-1;
   }
+
   hr {
     @apply my-4 border-border;
   }

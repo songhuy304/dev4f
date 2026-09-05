@@ -28,7 +28,7 @@ const TimeConverter = () => {
             placeholder="Enter timestamp"
             value={timestamp}
             showControls={false}
-            className="w-full"
+            className="w-full rounded-r-none"
             onValueChange={(value) => setTimestamp(value)}
             min={0}
             max={Number.MAX_SAFE_INTEGER}
