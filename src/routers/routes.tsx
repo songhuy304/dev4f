@@ -14,6 +14,7 @@ export const routes: RouteObject = {
     { path: PATHS.LINK_SHORTENER, element: <Pages.LinkShorterPage /> },
     { path: PATHS.TIMESTAMP, element: <Pages.TimestampConvert /> },
     { path: PATHS.MARKDOWN_PREVIEW, element: <Pages.MarkdownPage /> },
+    { path: PATHS.CURRENCY_CONVERTER, element: <Pages.CurrencyConverterPage /> },
     { path: '*', element: <PageSystem.NotFoundPage /> },
   ] as RouteObject[],
 };

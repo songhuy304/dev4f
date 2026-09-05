@@ -24,11 +24,14 @@ import { Logo } from './logo';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { ScrollFadeEffect } from './ui/scroll-fade';
+import { InputSearch } from './input-search';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, toggleSidebar } = useSidebar();
   const { hasPinnedTool, navPin } = usePinnedTools();
   const pinnedGroup = navPin();
+
+  const [search, setSearch] = React.useState('');
 
   const isCollapsed = state === 'collapsed';
 
@@ -66,10 +69,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   };
 
-  const navMainGroups = NAV_CONFIG.navMain.map((group) => ({
-    ...group,
-    items: group.items?.filter((item) => !hasPinnedTool(item.key)),
-  }));
+  const searchQuery = search.toLocaleLowerCase();
+
+  const matchesSearch = (title: string) =>
+    title.toLocaleLowerCase().includes(searchQuery);
+
+  const filteredPinnedGroup = {
+    ...pinnedGroup,
+    items: pinnedGroup.items?.filter((item) => matchesSearch(item.title)),
+  };
+
+  const filteredNav = NAV_CONFIG.navMain
+    .map((group) => ({
+      ...group,
+      items: group.items?.filter(
+        (item) => !hasPinnedTool(item.key) && matchesSearch(item.title),
+      ),
+    }))
+    .filter((group) => group.items?.length);
 
   return (
     <Sidebar variant="floating" side="right" {...props}>
@@ -83,6 +100,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <ChevronRight className="size-4 text-sidebar-foreground/50" />
             </Button>
           </SidebarMenuItem>
+
+          <InputSearch
+            placeholder="Search"
+            className="w-full h-7"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </SidebarMenu>
       </SidebarHeader>
 
@@ -91,13 +115,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <ScrollFadeEffect className="flex-1">
           <SidebarGroup>
             <SidebarMenu className="gap-2">
-              <SidebarNavGroup
-                group={pinnedGroup}
-                isOpen={openGroups[pinnedGroup.title]}
-                onToggle={() => toggleGroup(pinnedGroup.title)}
-              />
+              {!!filteredPinnedGroup.items?.length && (
+                <SidebarNavGroup
+                  group={filteredPinnedGroup}
+                  isOpen={openGroups[pinnedGroup.title]}
+                  onToggle={() => toggleGroup(pinnedGroup.title)}
+                />
+              )}
 
-              {navMainGroups.map((group) => (
+              {filteredNav.map((group) => (
                 <SidebarNavGroup
                   key={group.title}
                   group={group}
