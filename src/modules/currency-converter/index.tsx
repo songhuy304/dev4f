@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowUpDownIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ArrowUpDownIcon, RefreshCwIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { NumberInput } from '@/components/ui/input-number';
@@ -72,10 +72,12 @@ const CurrencyConverterPage = () => {
   const sameCurrency =
     fromCurrency?.value != null && fromCurrency.value === toCurrency?.value;
 
-  const { data: rateData } = useExchangeRate(
-    fromCurrency?.value,
-    toCurrency?.value,
-  );
+  const {
+    data: rateData,
+    fetchedAt,
+    isLoading: isRateLoading,
+    refetch,
+  } = useExchangeRate(fromCurrency?.value, toCurrency?.value);
 
   const rate = sameCurrency
     ? 1
@@ -85,7 +87,6 @@ const CurrencyConverterPage = () => {
       ? rateData.rate
       : undefined;
 
-  // fromAmount / toAmount luôn được suy ra, không cần effect để "đồng bộ" nữa.
   const fromAmount =
     editedField === 'from'
       ? editedAmount
@@ -100,12 +101,6 @@ const CurrencyConverterPage = () => {
         ? editedAmount * rate
         : undefined;
 
-  // Chỉ dùng effect cho đúng việc của nó: ghi nhận thời điểm rate mới về.
-  const [fetchedAt, setFetchedAt] = useState<Date>();
-  useEffect(() => {
-    if (rate !== undefined) setFetchedAt(new Date());
-  }, [rate]);
-
   const handleFromAmountChange = (value: number | undefined) => {
     setEditedField('from');
     setEditedAmount(value);
@@ -119,7 +114,6 @@ const CurrencyConverterPage = () => {
   const handleSwap = () => {
     setFromValue(toCurrency?.value);
     setToValue(fromCurrency?.value);
-    // editedAmount đi theo currency của nó, chỉ cần đổi nhãn field.
     setEditedField((prev) => (prev === 'from' ? 'to' : 'from'));
   };
 
@@ -192,24 +186,39 @@ const CurrencyConverterPage = () => {
       </div>
 
       {rate !== undefined && fromCurrency && toCurrency ? (
-        <Typography
-          variant="muted"
-          className="text-center text-xs text-muted-foreground"
-        >
-          1 {fromCurrency.label} ={' '}
-          <span className="text-foreground">
-            {formatNumberView(rate, { decimalScale: 6 })}
-          </span>{' '}
-          {toCurrency.label}
-          {fetchedAt ? (
-            <>
-              {' · '}
-              <span className="text-muted-foreground">
-                updated {formatDate(fetchedAt, 'HH:mm:ss')}
-              </span>
-            </>
+        <div className="flex items-center justify-center gap-1.5">
+          <Typography
+            variant="muted"
+            className="text-center text-xs text-muted-foreground"
+          >
+            1 {fromCurrency.label} ={' '}
+            <span className="text-foreground">
+              {formatNumberView(rate, { decimalScale: 6 })}
+            </span>{' '}
+            {toCurrency.label}
+            {fetchedAt ? (
+              <>
+                {' · '}
+                {formatDate(fetchedAt, 'DD/MM/YYYY HH:mm:ss')}
+              </>
+            ) : null}
+          </Typography>
+          {!sameCurrency ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-6 text-muted-foreground"
+              onClick={() => void refetch()}
+              disabled={isRateLoading}
+              aria-label="Reload exchange rate"
+            >
+              <RefreshCwIcon
+                className={`size-3.5 ${isRateLoading ? 'animate-spin' : ''}`}
+              />
+            </Button>
           ) : null}
-        </Typography>
+        </div>
       ) : null}
     </div>
   );

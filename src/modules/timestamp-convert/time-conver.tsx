@@ -31,7 +31,6 @@ const TimeConverter = () => {
             className="w-full rounded-r-none"
             onValueChange={(value) => setTimestamp(value)}
             min={0}
-            max={Number.MAX_SAFE_INTEGER}
           />
           <Button variant="default" onClick={handleConvert}>
             Convert
