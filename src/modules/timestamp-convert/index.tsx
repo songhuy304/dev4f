@@ -20,7 +20,7 @@ const TimestampConvert = () => {
   const formattedDate = now.tz(getUserTimezone()).format('YYYY-MM-DD HH:mm:ss');
 
   return (
-    <div className="flex flex-col gap-4 pt-8">
+    <div className="flex flex-col gap-4 pt-8 pb-4 px-4">
       <div className="space-y-1 flex flex-col items-center justify-center">
         <Typography variant="h1" className="font-medium">
           {timestamp}

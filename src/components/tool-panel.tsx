@@ -135,7 +135,7 @@ export function ToolPanel() {
             </div>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             {outlet}
           </div>
 

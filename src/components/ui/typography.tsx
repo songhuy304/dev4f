@@ -20,6 +20,7 @@ const typographyVariants = cva('', {
       small: 'text-sm font-medium leading-none',
       muted: 'text-sm text-muted-foreground',
       code: 'rounded bg-muted px-1.5 py-0.5 font-mono text-sm font-medium',
+      span: 'inline',
     },
   },
   defaultVariants: {
@@ -38,6 +39,7 @@ const typographyElements = {
   small: 'small',
   muted: 'p',
   code: 'code',
+  span: 'span',
 } as const;
 
 type TypographyElement = keyof typeof typographyElements;

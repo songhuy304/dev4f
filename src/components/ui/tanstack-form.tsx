@@ -148,6 +148,7 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     // These allow form.TextField, form.SelectField, etc.
     // For type-safe field names, use form.AppField render-prop instead.
     TextField: FormTextField,
+    TextAreaField: FormTextareaField,
   },
 });
 
@@ -156,7 +157,7 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
 // ---------------------------------------------------------------------------
 
 import type { WithTypedName } from './form-context';
-import { FormTextField, TextField } from './forms';
+import { FormTextareaField, FormTextField, TextField } from './forms';
 
 /**
  * Returns all composed field components with type-safe `name` props.
@@ -176,6 +177,7 @@ function useFormFields<TValues extends Record<string, unknown>>() {
   type Typed<C> = WithTypedName<C, TValues>;
   return {
     FormTextField: FormTextField as unknown as Typed<typeof FormTextField>,
+    FormTextareaField: FormTextareaField as unknown as Typed<typeof FormTextareaField>,
   };
 }
 

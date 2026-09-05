@@ -13,7 +13,7 @@ export const routes: RouteObject = {
     { path: PATHS.QR_CODE, element: <Pages.QrCodePage /> },
     { path: PATHS.LINK_SHORTENER, element: <Pages.LinkShorterPage /> },
     { path: PATHS.TIMESTAMP, element: <Pages.TimestampConvert /> },
-
+    { path: PATHS.MARKDOWN_PREVIEW, element: <Pages.MarkdownPage /> },
     { path: '*', element: <PageSystem.NotFoundPage /> },
   ] as RouteObject[],
 };

@@ -1,21 +1,25 @@
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import { Input } from './input';
-import { Button } from './button';
 import { cn } from '@/shared/lib/utils';
+import {
+  clamp,
+  formatNumber,
+  parseNumber,
+  type FormatNumberOptions,
+} from '@/shared/utils/number.util';
 
 export interface NumberInputProps extends Omit<
-  NumericFormatProps,
-  'value' | 'onValueChange'
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'defaultValue' | 'prefix'
 > {
   stepper?: number;
   thousandSeparator?: string;
+  decimalSeparator?: string;
   placeholder?: string;
   defaultValue?: number;
   min?: number;
   max?: number;
-  value?: number; // Controlled value
+  value?: number;
   suffix?: string;
   prefix?: string;
   onValueChange?: (value: number | undefined) => void;
@@ -28,7 +32,8 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
   (
     {
       stepper,
-      thousandSeparator,
+      thousandSeparator = '',
+      decimalSeparator = '.',
       placeholder,
       defaultValue,
       min = -Infinity,
@@ -36,111 +41,114 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       onValueChange,
       fixedDecimalScale = false,
       decimalScale = 0,
-      suffix,
-      prefix,
+      suffix = '',
+      prefix = '',
       value: controlledValue,
       showControls = true,
+      className,
+      onBlur,
+      onKeyDown,
       ...props
     },
     ref,
   ) => {
+    const fmtOptions: FormatNumberOptions = {
+      thousandSeparator,
+      decimalSeparator,
+      decimalScale,
+      fixedDecimalScale,
+      prefix,
+      suffix,
+    };
+
     const [value, setValue] = useState<number | undefined>(
       controlledValue ?? defaultValue,
     );
+    const [displayValue, setDisplayValue] = useState<string>(() =>
+      formatNumber(controlledValue ?? defaultValue, fmtOptions),
+    );
 
-    const handleIncrement = useCallback(() => {
-      setValue((prev) =>
-        prev === undefined
-          ? (stepper ?? 1)
-          : Math.min(prev + (stepper ?? 1), max),
-      );
-    }, [stepper, max]);
-
-    const handleDecrement = useCallback(() => {
-      setValue((prev) =>
-        prev === undefined
-          ? -(stepper ?? 1)
-          : Math.max(prev - (stepper ?? 1), min),
-      );
-    }, [stepper, min]);
-
-    useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (
-          document.activeElement ===
-          (ref as React.RefObject<HTMLInputElement>).current
-        ) {
-          if (e.key === 'ArrowUp') {
-            handleIncrement();
-          } else if (e.key === 'ArrowDown') {
-            handleDecrement();
-          }
-        }
-      };
-
-      window.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        window.removeEventListener('keydown', handleKeyDown);
-      };
-    }, [handleIncrement, handleDecrement, ref]);
-
+    // đồng bộ khi controlled value đổi từ bên ngoài
     useEffect(() => {
       if (controlledValue !== undefined) {
         setValue(controlledValue);
+        setDisplayValue(formatNumber(controlledValue, fmtOptions));
       }
     }, [controlledValue]);
 
-    const handleChange = (values: {
-      value: string;
-      floatValue: number | undefined;
-    }) => {
-      const newValue =
-        values.floatValue === undefined ? undefined : values.floatValue;
-      setValue(newValue);
-      if (onValueChange) {
-        onValueChange(newValue);
-      }
+    const commitValue = useCallback(
+      (next: number | undefined) => {
+        setValue(next);
+        onValueChange?.(next);
+      },
+      [onValueChange],
+    );
+
+    const handleIncrement = useCallback(() => {
+      const next =
+        value === undefined
+          ? (stepper ?? 1)
+          : clamp(value + (stepper ?? 1), min, max);
+      commitValue(next);
+      setDisplayValue(formatNumber(next, fmtOptions));
+    }, [value, stepper, min, max, commitValue, fmtOptions]);
+
+    const handleDecrement = useCallback(() => {
+      const next =
+        value === undefined
+          ? -(stepper ?? 1)
+          : clamp(value - (stepper ?? 1), min, max);
+      commitValue(next);
+      setDisplayValue(formatNumber(next, fmtOptions));
+    }, [value, stepper, min, max, commitValue, fmtOptions]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const raw = e.target.value;
+      setDisplayValue(raw); // hiển thị đúng những gì user gõ, format lúc blur
+      const parsed = parseNumber(raw, fmtOptions);
+      commitValue(parsed);
     };
 
-    const handleBlur = () => {
-      if (value !== undefined) {
-        if (value < min) {
-          setValue(min);
-          (ref as React.RefObject<HTMLInputElement>).current!.value =
-            String(min);
-        } else if (value > max) {
-          setValue(max);
-          (ref as React.RefObject<HTMLInputElement>).current!.value =
-            String(max);
-        }
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      let next = value;
+      if (next !== undefined) {
+        next = clamp(next, min, max);
       }
+      commitValue(next);
+      setDisplayValue(formatNumber(next, fmtOptions));
+      onBlur?.(e);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        handleIncrement();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        handleDecrement();
+      }
+      onKeyDown?.(e);
     };
 
     return (
-      <NumericFormat
-        value={value}
-        onValueChange={handleChange}
-        thousandSeparator={thousandSeparator}
-        decimalScale={decimalScale}
-        fixedDecimalScale={fixedDecimalScale}
-        allowNegative={min < 0}
-        valueIsNumericString
-        onBlur={handleBlur}
-        max={max}
-        min={min}
-        suffix={suffix}
-        prefix={prefix}
-        customInput={Input}
+      <Input
+        {...props}
+        ref={ref}
+        type="text"
+        inputMode="decimal"
         placeholder={placeholder}
+        value={displayValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         className={cn(
           '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-r-none relative',
-          props.className,
+          className,
           !showControls && 'rounded-r-md',
         )}
-        getInputRef={ref}
-        {...props}
       />
     );
   },
 );
+
+NumberInput.displayName = 'NumberInput';

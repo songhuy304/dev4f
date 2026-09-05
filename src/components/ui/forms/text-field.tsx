@@ -1,6 +1,6 @@
 'use client';
 
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { Input, InputProps } from '@/components/ui/input';
 import { FieldDescription, FieldLabel } from '@/components/ui/field';
 import {
@@ -31,10 +31,10 @@ export function TextField({
   ...inputProps
 }: TextFieldProps) {
   const field = useFieldContext();
-  const isTouched = useStore(field.store, (s) => s.meta.isTouched);
-  const isValid = useStore(field.store, (s) => s.meta.isValid);
-  const isValidating = useStore(field.store, (s) => s.meta.isValidating);
-  const value = useStore(field.store, (s) => s.value) as string | number;
+  const isTouched = useSelector(field.store, (s) => s.meta.isTouched);
+  const isValid = useSelector(field.store, (s) => s.meta.isValid);
+  const isValidating = useSelector(field.store, (s) => s.meta.isValidating);
+  const value = useSelector(field.store, (s) => s.value) as string | number;
 
   return (
     <FormFieldSet>
