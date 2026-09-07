@@ -27,7 +27,7 @@ const MarkdownHeader = ({
   onViewModeChange,
 }: MarkdownHeaderProps) => {
   const [copiedText, copy] = useCopyToClipboard();
-  const { downloadFile, isDownloading } = useDownload();
+  const { downloadMarkdown, isDownloading } = useDownload();
 
   const handleCopy = () => {
     void copy(value);
@@ -38,7 +38,7 @@ const MarkdownHeader = ({
     const url = URL.createObjectURL(blob);
 
     try {
-      await downloadFile('markdown.md', url);
+      downloadMarkdown('markdown.md', url);
     } finally {
       URL.revokeObjectURL(url);
     }
