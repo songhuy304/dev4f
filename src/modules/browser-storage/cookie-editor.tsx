@@ -1,5 +1,4 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Empty,
@@ -14,20 +13,28 @@ import { useState } from 'react';
 import { BrowserToolbar } from './browser-toolbar';
 import { CollapseItem } from './components/collapse-item';
 import { useCookieEditor } from './hooks/use-cookie-editor';
+import { getSameSite } from './utils';
 
 const renderHeader = (item: chrome.cookies.Cookie) => {
   const expiration = formatExpiration(item.expirationDate);
+  const sameSite = getSameSite(item.sameSite);
+  const SameSiteIcon = sameSite.icon;
+
   return (
-    <div className="flex items-start gap-2 justify-between">
+    <div className="flex w-full items-center gap-2 justify-between">
       <Typography variant="p" className="text-xs">
         {item.name}
       </Typography>
 
-      {expiration ? (
-        <Badge variant="outline" className="text-xs rounded-full">
-          {expiration}
+      <div className="flex items-center gap-2">
+        <Badge variant={sameSite.variant} className="text-10">
+          <SameSiteIcon />
         </Badge>
-      ) : null}
+
+        <Badge variant="outline" className="rounded-full text-10!">
+          {expiration ?? (item.session ? 'Session' : '—')}
+        </Badge>
+      </div>
     </div>
   );
 };

@@ -18,9 +18,10 @@ const badgeVariants = cva(
           'border border-sidebar-border shadow-inset text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
         ghost: '[a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 [a&]:hover:underline',
-        success: 'text-green-500 bg-green-500/30',
+        success: 'text-green-500! bg-green-500/30 border border-green-500/30',
+        warning: 'text-[#fbbf24] bg-[#fbbf241a] border border-[#fbbf244d]',
       },
-    },
+  },
     defaultVariants: {
       variant: 'default',
     },

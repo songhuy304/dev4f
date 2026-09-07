@@ -1,13 +1,13 @@
 {
   "name": "devkit",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "private": true,
   "description": "Extension for developers",
   "author": "HuyDang <songhuy304@gmail.com>",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm version patch --no-git-tag-version && tsc && vite build",
+    "build": "pnpm vite build",
     "preview": "vite preview",
     "analyzer": "tsc && cross-env ANALYZER=true vite build",
     "fix": "eslint --fix src/**/*.ts --fix  src/**/*.tsx",
