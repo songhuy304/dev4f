@@ -4,6 +4,7 @@ import {
   CalendarClock,
   Camera,
   Coins,
+  Database,
   Image,
   KeyRound,
   Link,
@@ -26,6 +27,7 @@ export type NavItem = {
   icon: LucideIcon;
   size?: ToolPanelSize;
   isActive?: boolean;
+  isNew?: boolean;
 };
 
 export type NavGroup = {
@@ -56,6 +58,7 @@ export const NAV_CONFIG: {
           icon: CalendarClock,
           size: '2lg',
         },
+
         {
           key: 'page-speed',
           title: 'Page Speed',
@@ -75,6 +78,14 @@ export const NAV_CONFIG: {
           url: `/${PATHS.RESPONSIVE_VIEWER}`,
           icon: Ruler,
           size: 'md',
+        },
+        {
+          key: 'storage-manager',
+          title: 'Storage Manager',
+          url: `/${PATHS.STORAGE_MANAGER}`,
+          icon: Database,
+          size: 'lg',
+          isNew: true,
         },
         {
           key: 'extract-images',

@@ -5,3 +5,4 @@ export * from './use-copy-clipboard';
 export * from './use-paste-clipboard';
 export * from './use-overlay-frame-size';
 export * from './use-fetch-api';
+export * from './use-filter';

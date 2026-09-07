@@ -15,6 +15,7 @@ export const routes: RouteObject = {
     { path: PATHS.TIMESTAMP, element: <Pages.TimestampConvert /> },
     { path: PATHS.MARKDOWN_PREVIEW, element: <Pages.MarkdownPage /> },
     { path: PATHS.CURRENCY_CONVERTER, element: <Pages.CurrencyConverterPage /> },
+    { path: PATHS.STORAGE_MANAGER, element: <Pages.BrowserStoragePage /> },
     { path: '*', element: <PageSystem.NotFoundPage /> },
   ] as RouteObject[],
 };

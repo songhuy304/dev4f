@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, SearchXIcon } from 'lucide-react';
 
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
@@ -19,9 +19,17 @@ import {
 
 import { NAV_CONFIG } from '@/shared/constant';
 
-import { usePinnedTools } from '@/shared/hooks';
+import { useFilter, usePinnedTools } from '@/shared/hooks';
 import { Logo } from './logo';
 import { Button } from './ui/button';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from './ui/empty';
 import { Separator } from './ui/separator';
 import { ScrollFadeEffect } from './ui/scroll-fade';
 import { InputSearch } from './input-search';
@@ -30,8 +38,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, toggleSidebar } = useSidebar();
   const { hasPinnedTool, navPin } = usePinnedTools();
   const pinnedGroup = navPin();
-
-  const [search, setSearch] = React.useState('');
 
   const isCollapsed = state === 'collapsed';
 
@@ -69,24 +75,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   };
 
-  const searchQuery = search.toLocaleLowerCase();
+  const matchesSearch = (title: string, q: string) =>
+    !q || title.toLocaleLowerCase().includes(q.toLocaleLowerCase());
 
-  const matchesSearch = (title: string) =>
-    title.toLocaleLowerCase().includes(searchQuery);
+  const {
+    data: filteredNav,
+    keyword,
+    setKeyword,
+  } = useFilter({
+    items: NAV_CONFIG.navMain,
+    filterFn: (group, q) => {
+      const items = group.items?.filter(
+        (item) => !hasPinnedTool(item.key) && matchesSearch(item.title, q),
+      );
+
+      if (!items?.length) return false;
+
+      return { ...group, items };
+    },
+  });
 
   const filteredPinnedGroup = {
     ...pinnedGroup,
-    items: pinnedGroup.items?.filter((item) => matchesSearch(item.title)),
+    items: (pinnedGroup.items ?? []).filter((item) =>
+      matchesSearch(item.title, keyword),
+    ),
   };
-
-  const filteredNav = NAV_CONFIG.navMain
-    .map((group) => ({
-      ...group,
-      items: group.items?.filter(
-        (item) => !hasPinnedTool(item.key) && matchesSearch(item.title),
-      ),
-    }))
-    .filter((group) => group.items?.length);
 
   return (
     <Sidebar variant="floating" side="right" {...props}>
@@ -102,10 +116,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
 
           <InputSearch
-            placeholder="Search"
-            className="w-full h-7"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name..."
+            className="w-full h-7!"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
           />
         </SidebarMenu>
       </SidebarHeader>
@@ -123,14 +137,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 />
               )}
 
-              {filteredNav.map((group) => (
-                <SidebarNavGroup
-                  key={group.title}
-                  group={group}
-                  isOpen={openGroups[group.title]}
-                  onToggle={() => toggleGroup(group.title)}
-                />
-              ))}
+              {filteredNav.length > 0 ? (
+                filteredNav.map((group) => (
+                  <SidebarNavGroup
+                    key={group.title}
+                    group={group}
+                    isOpen={openGroups[group.title]}
+                    onToggle={() => toggleGroup(group.title)}
+                  />
+                ))
+              ) : !filteredPinnedGroup.items?.length ? (
+                <Empty className="gap-3 border-0 p-4 md:p-4">
+                  <EmptyContent className="gap-1.5">
+                    <EmptyTitle>No tools found</EmptyTitle>
+                    <EmptyDescription>
+                      Try a different search keyword.
+                    </EmptyDescription>
+                  </EmptyContent>
+                </Empty>
+              ) : null}
             </SidebarMenu>
           </SidebarGroup>
         </ScrollFadeEffect>

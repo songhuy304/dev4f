@@ -19,6 +19,7 @@ import { NavGroup } from '@/shared/constant';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { cn } from '@/shared/lib/utils';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Badge } from './badge';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -723,6 +724,14 @@ export function SidebarNavGroup({
                     >
                       <Icon className="size-3.5 shrink-0" />
                       <span className="truncate">{item.title}</span>
+                      {item.isNew ? (
+                        <Badge
+                          variant="success"
+                          className="text-[8px] px-1 py-0.5"
+                        >
+                          New
+                        </Badge>
+                      ) : null}
                     </NavLink>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>

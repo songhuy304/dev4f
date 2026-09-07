@@ -1,97 +1,68 @@
 import { useState } from 'react';
 
+type DownloadType = 'txt' | 'json' | 'md';
+
+const MIME_TYPES: Record<DownloadType, string> = {
+  txt: 'text/plain;charset=utf-8',
+  json: 'application/json;charset=utf-8',
+  md: 'text/markdown;charset=utf-8',
+};
+
 export const useDownload = () => {
-  const [error, setError] = useState<Error | unknown | null>(null);
-  const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleResponse = async (response: Response): Promise<string> => {
-    if (!response.ok) {
-      throw new Error('Could not download file');
-    }
-
-    const contentLength = response.headers.get('content-length');
-    const reader = response.clone().body?.getReader();
-
-    if (!contentLength || !reader) {
-      const blob = await response.blob();
-
-      return createBlobURL(blob);
-    }
-
-    const stream = await getStream(contentLength, reader);
-    const newResponse = new Response(stream);
-    const blob = await newResponse.blob();
-
-    return createBlobURL(blob);
-  };
-
-  const getStream = async (
-    contentLength: string,
-    reader: ReadableStreamDefaultReader<Uint8Array>,
-  ): Promise<ReadableStream<Uint8Array>> => {
-    let loaded = 0;
-    const total = parseInt(contentLength, 10);
-
-    return new ReadableStream<Uint8Array>({
-      async start(controller) {
-        try {
-          for (;;) {
-            const { done, value } = await reader.read();
-
-            if (done) break;
-
-            loaded += value.byteLength;
-            const percentage = Math.trunc((loaded / total) * 100);
-            setProgress(percentage);
-            controller.enqueue(value);
-          }
-        } catch (error) {
-          controller.error(error);
-          throw error;
-        } finally {
-          controller.close();
-        }
-      },
-    });
-  };
-
-  const createBlobURL = (blob: Blob): string => {
-    return window.URL.createObjectURL(blob);
-  };
-
-  const handleDownload = (fileName: string, url: string) => {
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
-
-  const downloadFile = async (fileName: string, fileUrl: string) => {
+  const download = (content: string, fileName: string, type: DownloadType) => {
     setIsDownloading(true);
     setError(null);
-    setProgress(null);
 
     try {
-      const response = await fetch(fileUrl);
-      const url = await handleResponse(response);
+      const blob = new Blob([content], {
+        type: MIME_TYPES[type],
+      });
 
-      handleDownload(fileName, url);
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName.endsWith(`.${type}`)
+        ? fileName
+        : `${fileName}.${type}`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
     } catch (error) {
-      setError(error);
+      setError(
+        error instanceof Error ? error : new Error('Could not download file'),
+      );
     } finally {
       setIsDownloading(false);
     }
   };
 
+  const downloadJson = (data: unknown, fileName: string) => {
+    const content = JSON.stringify(data, null, 2);
+
+    download(content, fileName, 'json');
+  };
+
+  const downloadTxt = (content: string, fileName: string) => {
+    download(content, fileName, 'txt');
+  };
+
+  const downloadMarkdown = (content: string, fileName: string) => {
+    download(content, fileName, 'md');
+  };
+
   return {
     error,
     isDownloading,
-    progress,
-    downloadFile,
+    download,
+    downloadJson,
+    downloadTxt,
+    downloadMarkdown,
   };
 };

@@ -13,6 +13,7 @@ import { cn } from '@/shared/lib/utils';
 import { useKeyboard, usePinnedTools } from '@/shared/hooks';
 
 import { Kbd } from './ui/kbd';
+import { Badge } from './ui/badge';
 
 const PANEL_SIZE_CLASS: Record<ToolPanelSize, string> = {
   sm: 'w-[min(18rem,calc(100vw-4rem))]',
@@ -97,10 +98,7 @@ export function ToolPanel() {
 
               <span className="truncate text-sm font-medium">{title}</span>
 
-              <span
-                aria-hidden
-                className="size-1.5 shrink-0 rounded-full bg-emerald-500"
-              />
+              {navItem?.isNew ? <Badge variant="success">New</Badge> : null}
             </div>
 
             <div className="flex shrink-0 items-center gap-0.5">
@@ -135,9 +133,7 @@ export function ToolPanel() {
             </div>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            {outlet}
-          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto">{outlet}</div>
 
           <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-sidebar-border px-4 py-3 text-[11px] text-muted-foreground">
             <span>

@@ -12,7 +12,7 @@ export function InputSearch({
   ...props
 }: InputSearchProps) {
   return (
-    <InputGroup className={cn(className)}>
+    <InputGroup className={cn('h-8!', className)}>
       <InputGroupInput placeholder={placeholder} {...props} />
       <InputGroupAddon>
         <Search className="size-3 text-muted-foreground" />

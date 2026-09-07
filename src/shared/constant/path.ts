@@ -8,6 +8,7 @@ export const PATHS = {
   QR_CODE: `${TOOLS_PATH}/qr-code`,
   SETTINGS: '/settings',
   RESPONSIVE_VIEWER: `${TOOLS_PATH}/responsive-viewer`,
+  STORAGE_MANAGER: `${TOOLS_PATH}/storage-manager`,
   EXTRACT_IMAGES: `${TOOLS_PATH}/extract-images`,
   COLOR_PICKER: `${TOOLS_PATH}/color-picker`,
   SCREENSHOT: `${TOOLS_PATH}/screenshot`,
