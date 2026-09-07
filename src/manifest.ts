@@ -7,7 +7,7 @@ export default defineManifest({
   name: 'DevKit',
   version: packageJson.version,
 
-  permissions: ['activeTab', 'scripting'],
+  permissions: ['activeTab', 'scripting', 'cookies', 'tabs'],
 
   host_permissions: ['<all_urls>'],
 
