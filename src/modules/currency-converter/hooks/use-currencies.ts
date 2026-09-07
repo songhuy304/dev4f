@@ -3,13 +3,7 @@ import { hasFlag } from 'country-flag-icons';
 import * as flagSvgs from 'country-flag-icons/string/3x2';
 import { useFetchApi } from '@/shared/hooks';
 import { currencyService } from '../services';
-import type { Currency } from '../types';
-
-interface CurrencyOption {
-  label: string;
-  value: string;
-  flag?: string;
-}
+import type { Currency, CurrencyOption } from '../types';
 
 function getFlagSrc(isoCode: string): string | undefined {
   const countryCode = isoCode.slice(0, 2).toUpperCase();
@@ -44,4 +38,3 @@ function useCurrencies(immediate = true) {
 }
 
 export { useCurrencies };
-export type { CurrencyOption };

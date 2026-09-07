@@ -1,1 +1,6 @@
-export type { Currency, CurrenciesResponse, Rate } from './currency';
+export type {
+  Currency,
+  CurrenciesResponse,
+  Rate,
+  CurrencyOption,
+} from './currency';

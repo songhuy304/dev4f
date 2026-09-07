@@ -16,4 +16,10 @@ interface Rate {
   rate: number;
 }
 
-export type { Currency, CurrenciesResponse, Rate };
+interface CurrencyOption {
+  label: string;
+  value: string;
+  flag?: string;
+}
+
+export type { Currency, CurrenciesResponse, Rate, CurrencyOption };
