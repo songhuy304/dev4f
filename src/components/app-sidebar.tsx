@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ChevronRight, SearchXIcon } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
@@ -20,19 +20,17 @@ import {
 import { NAV_CONFIG } from '@/shared/constant';
 
 import { useFilter, usePinnedTools } from '@/shared/hooks';
+import { InputSearch } from './input-search';
 import { Logo } from './logo';
 import { Button } from './ui/button';
 import {
   Empty,
   EmptyContent,
   EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
+  EmptyTitle
 } from './ui/empty';
-import { Separator } from './ui/separator';
 import { ScrollFadeEffect } from './ui/scroll-fade';
-import { InputSearch } from './input-search';
+import { Separator } from './ui/separator';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, toggleSidebar } = useSidebar();
