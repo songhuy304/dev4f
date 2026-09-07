@@ -57,9 +57,7 @@ export function formatTimestampUnit(unit: TimestampUnit): string {
   return TIMESTAMP_UNIT_LABELS[unit];
 }
 
-export function detectTimestampUnit(
-  timestamp: number | string,
-): TimestampUnit {
+export function detectTimestampUnit(timestamp: number | string): TimestampUnit {
   const raw = String(timestamp).trim();
 
   if (!raw || Number.isNaN(Number(raw))) {
@@ -291,3 +289,36 @@ export function nowTimestamp(unit: TimestampUnit = 'seconds'): number {
 }
 
 export { dayjs };
+
+export const formatExpiration = (expirationDate: unknown): string | null => {
+  if (expirationDate == null) {
+    return null;
+  }
+
+  const date = dayjs.unix(Number(expirationDate));
+
+  if (!date.isValid()) {
+    return String(expirationDate);
+  }
+
+  const now = dayjs();
+
+  const years = date.diff(now, 'year');
+  if (years >= 1) return `${years}y`;
+
+  const months = date.diff(now, 'month');
+  if (months >= 1) return `${months}mo`;
+
+  const days = date.diff(now, 'day');
+  if (days >= 1) return `${days}d`;
+
+  const hours = date.diff(now, 'hour');
+  if (hours >= 1) return `${hours}h`;
+
+  const minutes = date.diff(now, 'minute');
+  if (minutes >= 1) return `${minutes}m`;
+
+  const seconds = date.diff(now, 'second');
+
+  return `${Math.max(seconds, 0)}s`;
+};

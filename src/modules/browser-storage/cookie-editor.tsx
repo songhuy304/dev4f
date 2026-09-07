@@ -1,46 +1,94 @@
-import { useEffect, useState } from 'react';
-import { EXT_MESSAGE } from '@/shared/constant/extension';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import { Typography } from '@/components/ui/typography';
+import { useFilter } from '@/shared/hooks';
+import { formatExpiration } from '@/shared/utils';
+import { useState } from 'react';
+import { BrowserToolbar } from './browser-toolbar';
+import { CollapseItem } from './components/collapse-item';
+import { useCookieEditor } from './hooks/use-cookie-editor';
+
+const renderHeader = (item: chrome.cookies.Cookie) => {
+  const expiration = formatExpiration(item.expirationDate);
+  return (
+    <div className="flex items-start gap-2 justify-between">
+      <Typography variant="p" className="text-xs">
+        {item.name}
+      </Typography>
+
+      {expiration ? (
+        <Badge variant="outline" className="text-xs rounded-full">
+          {expiration}
+        </Badge>
+      ) : null}
+    </div>
+  );
+};
 
 const CookieEditor = () => {
-  const [cookies, setCookies] = useState<chrome.cookies.Cookie[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const { cookies, refresh } = useCookieEditor();
 
-  useEffect(() => {
-    if (!chrome?.runtime?.sendMessage) {
-      setError('Extension runtime is not available in this context');
-      return;
-    }
-
-    chrome.runtime.sendMessage(
-      { type: EXT_MESSAGE.GET_COOKIES },
-      (response) => {
-        if (chrome.runtime.lastError) {
-          setError(chrome.runtime.lastError.message ?? '');
-          return;
-        }
-
-        if (response?.cookies) {
-          setCookies(response.cookies);
-          setError(null);
-        } else {
-          setError(response?.error ?? 'Get cookies failed');
-        }
-      },
-    );
-  }, []);
-
-  if (error) {
-    return <div className="text-muted-foreground text-sm">{error}</div>;
-  }
+  const { data, keyword, setKeyword } = useFilter({
+    items: cookies,
+    filterFn: (item, query) => {
+      const q = query.toLowerCase();
+      return (
+        item.name.toLowerCase().includes(q) ||
+        item.value.toLowerCase().includes(q) ||
+        item.domain.toLowerCase().includes(q) ||
+        item.path.toLowerCase().includes(q)
+      );
+    },
+  });
 
   return (
-    <div>
-      {cookies.map((c) => (
-        <div key={`${c.name}-${c.domain}-${c.path}`}>
-          {c.name} = {c.value} ({c.domain}
-          {c.path})
-        </div>
-      ))}
+    <div className="flex flex-col gap-2">
+      <BrowserToolbar
+        onAddNew={() => setIsCreating(true)}
+        onDownloadJSON={() => {}}
+        onDownloadTXT={() => {}}
+        keyword={keyword}
+        setKeyword={setKeyword}
+        total={() => `${data.length} items`}
+        onRefresh={refresh}
+      />
+
+      {isCreating ? (
+        <Card className="gap-0 overflow-hidden">
+          <CardContent></CardContent>
+        </Card>
+      ) : null}
+
+      {data.length === 0 ? (
+        <Empty>
+          <EmptyContent>
+            <EmptyTitle>No items found</EmptyTitle>
+            <EmptyDescription>
+              No items found in the local storage.
+            </EmptyDescription>
+          </EmptyContent>
+        </Empty>
+      ) : (
+        <Card className="gap-0 overflow-hidden py-0">
+          <CardContent className="divide-y p-0">
+            {data.map((item) => (
+              <CollapseItem
+                key={item.name}
+                header={renderHeader(item)}
+                content={<div>ád sadsd</div>}
+              />
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

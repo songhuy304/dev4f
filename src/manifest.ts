@@ -1,11 +1,10 @@
 import { defineManifest } from '@crxjs/vite-plugin';
-import packageJson from '../package.json';
 
 export default defineManifest({
   manifest_version: 3,
 
   name: 'DevKit',
-  version: packageJson.version,
+  version: '1.1.4',
 
   permissions: ['activeTab', 'scripting', 'cookies', 'tabs'],
 
