@@ -49,41 +49,45 @@ type ButtonProps = React.ComponentProps<'button'> &
     isLoading?: boolean;
   };
 
-function Button({
-  className,
-  variant = 'default',
-  size = 'default',
-  tooltip,
-  asChild = false,
-  isLoading = false,
-  ...props
-}: ButtonProps) {
-  const Comp = asChild ? Slot.Root : 'button';
-  return tooltip ? (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Comp
-          data-slot="button"
-          data-variant={variant}
-          data-size={size}
-          data-loading={isLoading}
-          className={cn(buttonVariants({ variant, size, className }))}
-          {...props}
-        />
-      </TooltipTrigger>
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant = 'default',
+      size = 'default',
+      tooltip,
+      asChild = false,
+      isLoading = false,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = asChild ? Slot.Root : 'button';
+    const button = (
+      <Comp
+        data-slot="button"
+        data-variant={variant}
+        data-size={size}
+        data-loading={isLoading}
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
 
-      <TooltipContent>{tooltip}</TooltipContent>
-    </Tooltip>
-  ) : (
-    <Comp
-      data-slot="button"
-      data-variant={variant}
-      data-size={size}
-      data-loading={isLoading}
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  );
-}
+    if (!tooltip) {
+      return button;
+    }
+
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent>{tooltip}</TooltipContent>
+      </Tooltip>
+    );
+  },
+);
+
+Button.displayName = 'Button';
 
 export { Button, buttonVariants, type ButtonProps };

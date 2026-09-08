@@ -8,6 +8,7 @@ interface DescriptionItemProps {
   labelClassName?: string;
   valueClassName?: string;
   tooltip?: string;
+  copy?: string;
 }
 
 export function DescriptionItem({
@@ -16,12 +17,13 @@ export function DescriptionItem({
   labelClassName,
   valueClassName,
   tooltip,
+  copy,
 }: DescriptionItemProps) {
   return (
     <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
       <TableCell
         className={cn(
-          'w-40 py-3 text-sm font-medium bg-muted/80',
+          'w-40 py-3 text-sm font-medium bg-muted/80 truncate',
           labelClassName,
         )}
       >
@@ -33,7 +35,13 @@ export function DescriptionItem({
           valueClassName,
         )}
       >
-        <Typography variant="small" ellipsis tooltip={tooltip} className="block w-full">
+        <Typography
+          variant="small"
+          ellipsis
+          tooltip={tooltip}
+          copy={copy}
+          className="block w-full"
+        >
           {children}
         </Typography>
       </TableCell>

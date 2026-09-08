@@ -1,35 +1,54 @@
+import { DateTimeInput } from '@/components/datetime-input';
+import { DateTimePicker } from '@/components/datetime-picker';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Description, DescriptionItem } from '@/components/ui/description';
 import { Label } from '@/components/ui/label';
-import { ArrowRightIcon } from 'lucide-react';
+import { MotionView } from '@/components/ui/motion-view';
 import {
   DateResult,
   dateToTimestamp,
   dayjs,
   getUserTimezone,
 } from '@/shared/utils';
-import { MotionView } from '@/components/ui/motion-view';
-import { Description, DescriptionItem } from '@/components/ui/description';
-import { NumberInput } from '@/components/ui/input-number';
+import { ArrowRightIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
+
+type InputTimezone = 'local' | 'utc';
+
+const DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 
 const DateConverter = () => {
-  const now = dayjs().tz(getUserTimezone());
-
-  const [year, setYear] = useState(now.year());
-  const [month, setMonth] = useState(now.month() + 1);
-  const [day, setDay] = useState(now.date());
-  const [hour, setHour] = useState(now.hour());
-  const [minute, setMinute] = useState(now.minute());
-  const [second, setSecond] = useState(now.second());
+  const [inputTimezone, setInputTimezone] = useState<InputTimezone>('local');
+  const [date, setDate] = useState<Date | undefined>(() => new Date());
   const [result, setResult] = useState<DateResult | undefined>(undefined);
 
+  const timezone = useMemo(
+    () => (inputTimezone === 'utc' ? 'UTC' : getUserTimezone()),
+    [inputTimezone],
+  );
+
+  const handleTimezoneChange = (next: InputTimezone) => {
+    if (next === inputTimezone) return;
+
+    if (date) {
+      const prevTz = inputTimezone === 'utc' ? 'UTC' : getUserTimezone();
+      const nextTz = next === 'utc' ? 'UTC' : getUserTimezone();
+      const wall = dayjs(date).tz(prevTz).format('YYYY-MM-DD HH:mm:ss');
+      setDate(dayjs.tz(wall, nextTz).toDate());
+    }
+
+    setInputTimezone(next);
+  };
+
   const handleConvert = () => {
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const dateStr = `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(minute)}:${pad(second)}`;
+    if (!date) {
+      setResult(undefined);
+      return;
+    }
 
     try {
-      const converted = dateToTimestamp(dateStr);
-      setResult(converted);
+      setResult(dateToTimestamp(date, timezone));
     } catch {
       setResult(undefined);
     }
@@ -37,82 +56,68 @@ const DateConverter = () => {
 
   return (
     <div className="flex flex-col gap-4 mt-6">
-      <div className="grid grid-cols-7 gap-2">
-        <div className="space-y-2">
-          <Label>Year</Label>
-          <NumberInput
-            value={year}
-            onValueChange={(v) => v !== undefined && setYear(v)}
-            min={1970}
-            max={2100}
-            showControls={false}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Month</Label>
-          <NumberInput
-            showControls={false}
-            value={month}
-            onValueChange={(v) => v !== undefined && setMonth(v)}
-            min={1}
-            max={12}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Day</Label>
-          <NumberInput
-            showControls={false}
-            value={day}
-            onValueChange={(v) => v !== undefined && setDay(v)}
-            min={1}
-            max={31}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Hour</Label>
-          <NumberInput
-            showControls={false}
-            value={hour}
-            onValueChange={(v) => v !== undefined && setHour(v)}
-            min={0}
-            max={23}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Minutes</Label>
-          <NumberInput
-            showControls={false}
-            value={minute}
-            onValueChange={(v) => v !== undefined && setMinute(v)}
-            min={0}
-            max={59}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Seconds</Label>
-          <NumberInput
-            showControls={false}
-            value={second}
-            onValueChange={(v) => v !== undefined && setSecond(v)}
-            min={0}
-            max={59}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label>Input timezone</Label>
+        <ButtonGroup>
+          <Button
+            type="button"
+            variant={inputTimezone === 'local' ? 'default' : 'outline'}
+            onClick={() => handleTimezoneChange('local')}
+          >
+            Local
+          </Button>
+          <Button
+            type="button"
+            variant={inputTimezone === 'utc' ? 'default' : 'outline'}
+            onClick={() => handleTimezoneChange('utc')}
+          >
+            UTC
+          </Button>
+        </ButtonGroup>
+      </div>
 
-        <Button
-          variant="default"
-          className="w-fit self-end"
-          onClick={handleConvert}
-        >
-          Convert
-          <ArrowRightIcon className="w-4 h-4" />
-        </Button>
+      <div className="space-y-2">
+        <Label>Date & time</Label>
+        <div className="flex w-full items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <DateTimePicker
+              value={date}
+              onChange={setDate}
+              timezone={timezone}
+              timePicker={{ hour: true, minute: true, second: true }}
+              renderTrigger={({ open, value, setOpen }) => (
+                <DateTimeInput
+                  value={value}
+                  onChange={(next) => !open && setDate(next)}
+                  format={DATE_FORMAT}
+                  timezone={timezone}
+                  disabled={open}
+                  onCalendarClick={() => setOpen(!open)}
+                  className="h-9 w-full"
+                />
+              )}
+            />
+          </div>
+          <Button variant="default" onClick={handleConvert} disabled={!date}>
+            Convert
+            <ArrowRightIcon className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       <MotionView show={!!result}>
         <Description>
-          <DescriptionItem label="Timestamp">
+          <DescriptionItem
+            label="Timestamp"
+            copy={String(result?.timestamp ?? '')}
+          >
             {result?.timestamp}
+          </DescriptionItem>
+          <DescriptionItem
+            label="Timestamp in ms"
+            copy={String(result?.milliseconds ?? '')}
+          >
+            {result?.milliseconds}
           </DescriptionItem>
           <DescriptionItem label="ISO">{result?.iso}</DescriptionItem>
           <DescriptionItem label="GMT">{result?.gmt}</DescriptionItem>

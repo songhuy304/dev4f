@@ -48,7 +48,8 @@ interface TypographyProps
   extends
     React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof typographyVariants> {
-  copy?: boolean;
+  /** Text to copy when the copy button is clicked */
+  copy?: string;
   ellipsis?: boolean;
   tooltip?: string;
 }
@@ -56,7 +57,7 @@ interface TypographyProps
 function Typography({
   className,
   variant = 'p',
-  copy = false,
+  copy,
   ellipsis = false,
   tooltip,
   children,
@@ -68,20 +69,12 @@ function Typography({
     variant as TypographyElement
   ] as React.ElementType;
 
-  const text = React.useMemo(() => {
-    if (typeof children === 'string') return children;
-    if (typeof children === 'number') return String(children);
-
-    return '';
-  }, [children]);
-
   const handleCopy = () => {
-    if (!text) return;
-
-    copyToClipboard(text);
+    if (!copy) return;
+    copyToClipboard(copy);
   };
 
-  const copied = copiedText === text;
+  const copied = !!copy && copiedText === copy;
 
   const content = (
     <Component
@@ -100,8 +93,7 @@ function Typography({
           type="button"
           onClick={handleCopy}
           className={cn(
-            'shrink-0 text-muted-foreground transition-opacity',
-            'opacity-0 group-hover:opacity-100',
+            'shrink-0 text-muted-foreground transition-opacity ml-1',
             'hover:text-foreground',
           )}
           aria-label={copied ? 'Copied' : 'Copy'}
