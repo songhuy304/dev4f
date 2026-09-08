@@ -119,7 +119,7 @@ export function DatePickerField({
           </FieldLabel>
         )}
 
-        <Popover>
+        <Popover modal={false}>
           <PopoverTrigger asChild>
             <Button
               id={field.name}
@@ -137,7 +137,7 @@ export function DatePickerField({
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0" align="start" sideOffset={4}>
             <Calendar
               mode="single"
               selected={value}

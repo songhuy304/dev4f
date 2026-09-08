@@ -4,6 +4,7 @@ import {
   EXT_IFRAME_ID,
   EXT_MESSAGE,
 } from '@/shared/constant/extension';
+import { getAllImageUrls } from '@/modules/extract-images/utils';
 
 function getIframe() {
   return document.getElementById(EXT_IFRAME_ID) as HTMLIFrameElement | null;
@@ -112,6 +113,18 @@ chrome.runtime.onMessage.addListener((message) => {
 window.addEventListener('message', (event) => {
   const iframe = getIframe();
   if (!iframe || event.source !== iframe.contentWindow) {
+    return;
+  }
+
+  if (event.data?.type === EXT_MESSAGE.GET_PAGE_IMAGES) {
+    iframe.contentWindow?.postMessage(
+      {
+        type: EXT_MESSAGE.PAGE_IMAGES,
+        requestId: event.data.requestId,
+        urls: getAllImageUrls(),
+      },
+      '*',
+    );
     return;
   }
 
