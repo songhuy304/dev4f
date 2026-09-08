@@ -214,7 +214,7 @@ function Sidebar({
           variant="secondary"
           aria-label="Open sidebar"
           className={cn(
-            'fixed top-1/2 z-100 h-16 w-6 -translate-y-1/2 cursor-pointer border-sidebar-border transition-all duration-200 ease-out',
+            'fixed top-1/2 z-30 h-16 w-6 -translate-y-1/2 cursor-pointer border-sidebar-border transition-all duration-200 ease-out',
             'animate-in fade-in zoom-in-95 duration-300',
             'hover:scale-110 hover:border-sidebar-border/80',
             side === 'right'

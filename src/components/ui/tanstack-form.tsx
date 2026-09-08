@@ -135,6 +135,9 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     FieldSeparator,
     FieldTitle,
     TextField,
+    DatePickerField,
+    CheckboxField,
+    SelectField,
   },
   formComponents: {
     // Layout & actions
@@ -149,6 +152,9 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     // For type-safe field names, use form.AppField render-prop instead.
     TextField: FormTextField,
     TextAreaField: FormTextareaField,
+    DatePickerField: FormDatePickerField,
+    CheckboxField: FormCheckboxField,
+    SelectField: FormSelectField,
   },
 });
 
@@ -157,7 +163,17 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
 // ---------------------------------------------------------------------------
 
 import type { WithTypedName } from './form-context';
-import { FormTextareaField, FormTextField, TextField } from './forms';
+import {
+  CheckboxField,
+  DatePickerField,
+  FormCheckboxField,
+  FormDatePickerField,
+  FormSelectField,
+  FormTextareaField,
+  FormTextField,
+  SelectField,
+  TextField,
+} from './forms';
 
 /**
  * Returns all composed field components with type-safe `name` props.
@@ -177,7 +193,16 @@ function useFormFields<TValues extends Record<string, unknown>>() {
   type Typed<C> = WithTypedName<C, TValues>;
   return {
     FormTextField: FormTextField as unknown as Typed<typeof FormTextField>,
-    FormTextareaField: FormTextareaField as unknown as Typed<typeof FormTextareaField>,
+    FormTextareaField: FormTextareaField as unknown as Typed<
+      typeof FormTextareaField
+    >,
+    FormDatePickerField: FormDatePickerField as unknown as Typed<
+      typeof FormDatePickerField
+    >,
+    FormCheckboxField: FormCheckboxField as unknown as Typed<
+      typeof FormCheckboxField
+    >,
+    FormSelectField: FormSelectField as unknown as Typed<typeof FormSelectField>,
   };
 }
 

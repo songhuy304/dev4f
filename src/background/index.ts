@@ -38,8 +38,76 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       chrome.cookies.getAll({ url: tabUrl }, (cookies) => {
-        sendResponse({ cookies });
+        sendResponse({ cookies, tabUrl });
       });
+    });
+
+    return true;
+  }
+
+  if (message.type === EXT_MESSAGE.SET_COOKIE) {
+    void getSenderTabUrl(sender).then((tabUrl) => {
+      const details = {
+        ...(message.details as chrome.cookies.SetDetails),
+      };
+
+      if (!details.url && tabUrl) {
+        details.url = tabUrl;
+      }
+
+      if (!details.url) {
+        sendResponse({ error: 'No cookie URL' });
+        return;
+      }
+
+      const removeDetails = message.remove as
+        | chrome.cookies.CookieDetails
+        | undefined;
+
+      const setCookie = () => {
+        chrome.cookies.set(details, (cookie) => {
+          if (chrome.runtime.lastError) {
+            sendResponse({
+              error: chrome.runtime.lastError.message ?? 'Set cookie failed',
+            });
+            return;
+          }
+
+          sendResponse({ cookie });
+        });
+      };
+
+      if (removeDetails?.url && removeDetails.name) {
+        chrome.cookies.remove(removeDetails, () => {
+          // Ignore remove errors (cookie may already be gone) and proceed to set.
+          setCookie();
+        });
+        return;
+      }
+
+      setCookie();
+    });
+
+    return true;
+  }
+
+  if (message.type === EXT_MESSAGE.REMOVE_COOKIE) {
+    const details = message.details as chrome.cookies.CookieDetails | undefined;
+
+    if (!details?.url || !details.name) {
+      sendResponse({ error: 'Missing cookie remove details' });
+      return false;
+    }
+
+    chrome.cookies.remove(details, (result) => {
+      if (chrome.runtime.lastError) {
+        sendResponse({
+          error: chrome.runtime.lastError.message ?? 'Remove cookie failed',
+        });
+        return;
+      }
+
+      sendResponse({ result });
     });
 
     return true;

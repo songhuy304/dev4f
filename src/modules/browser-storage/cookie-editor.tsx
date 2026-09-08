@@ -1,3 +1,8 @@
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -8,12 +13,20 @@ import {
 } from '@/components/ui/empty';
 import { Typography } from '@/components/ui/typography';
 import { useFilter } from '@/shared/hooks';
+import { useDownload } from '@/shared/hooks/use-download';
 import { formatExpiration } from '@/shared/utils';
-import { useState } from 'react';
+import { AlertCircleIcon } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { BrowserToolbar } from './browser-toolbar';
 import { CollapseItem } from './components/collapse-item';
+import { CookieForm } from './components/cookie-form';
 import { useCookieEditor } from './hooks/use-cookie-editor';
-import { getSameSite } from './utils';
+import type { CookieFormValues } from './types';
+import {
+  cookieToFormValues,
+  getCookieKey,
+  getSameSite,
+} from './utils';
 
 const renderHeader = (item: chrome.cookies.Cookie) => {
   const expiration = formatExpiration(item.expirationDate);
@@ -21,7 +34,7 @@ const renderHeader = (item: chrome.cookies.Cookie) => {
   const SameSiteIcon = sameSite.icon;
 
   return (
-    <div className="flex w-full items-center gap-2 justify-between">
+    <div className="flex w-full items-center justify-between gap-2">
       <Typography variant="p" className="text-xs">
         {item.name}
       </Typography>
@@ -40,10 +53,19 @@ const renderHeader = (item: chrome.cookies.Cookie) => {
 };
 
 const CookieEditor = () => {
+  const { downloadJson, downloadTxt } = useDownload();
   const [isCreating, setIsCreating] = useState(false);
-  const { cookies, refresh } = useCookieEditor();
+  const {
+    cookies,
+    error,
+    refresh,
+    createCookie,
+    updateCookie,
+    deleteCookie,
+    clearAll,
+  } = useCookieEditor();
 
-  const { data, keyword, setKeyword } = useFilter({
+  const { data, keyword, setKeyword } = useFilter<chrome.cookies.Cookie>({
     items: cookies,
     filterFn: (item, query) => {
       const q = query.toLowerCase();
@@ -56,21 +78,73 @@ const CookieEditor = () => {
     },
   });
 
+  const handleCreate = useCallback(
+    async (values: CookieFormValues) => {
+      try {
+        await createCookie(values);
+        setIsCreating(false);
+      } catch {
+        // error is surfaced via Alert from hook state
+      }
+    },
+    [createCookie],
+  );
+
+  const handleUpdate = useCallback(
+    async (item: chrome.cookies.Cookie, values: CookieFormValues) => {
+      try {
+        await updateCookie(item, values);
+      } catch {
+        // error is surfaced via Alert from hook state
+      }
+    },
+    [updateCookie],
+  );
+
   return (
     <div className="flex flex-col gap-2">
       <BrowserToolbar
         onAddNew={() => setIsCreating(true)}
-        onDownloadJSON={() => {}}
-        onDownloadTXT={() => {}}
+        onDownloadJSON={() => downloadJson(cookies, 'cookies')}
+        onDownloadTXT={() =>
+          downloadTxt(
+            cookies
+              .map(
+                (item) =>
+                  `${item.name}=${item.value}; Domain=${item.domain}; Path=${item.path}`,
+              )
+              .join('\n'),
+            'cookies',
+          )
+        }
         keyword={keyword}
         setKeyword={setKeyword}
         total={() => `${data.length} items`}
         onRefresh={refresh}
+        onClearAll={() => {
+          void clearAll();
+        }}
       />
+
+      {error ? (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle>Cookie error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : null}
 
       {isCreating ? (
         <Card className="gap-0 overflow-hidden">
-          <CardContent></CardContent>
+          <CardContent>
+            <CookieForm
+              onSubmit={(values) => {
+                void handleCreate(values);
+              }}
+              onCancel={() => setIsCreating(false)}
+              submitLabel="Create"
+            />
+          </CardContent>
         </Card>
       ) : null}
 
@@ -79,7 +153,7 @@ const CookieEditor = () => {
           <EmptyContent>
             <EmptyTitle>No items found</EmptyTitle>
             <EmptyDescription>
-              No items found in the local storage.
+              No cookies found for this site.
             </EmptyDescription>
           </EmptyContent>
         </Empty>
@@ -88,9 +162,19 @@ const CookieEditor = () => {
           <CardContent className="divide-y p-0">
             {data.map((item) => (
               <CollapseItem
-                key={item.name}
+                key={getCookieKey(item)}
                 header={renderHeader(item)}
-                content={<div>ád sadsd</div>}
+                content={
+                  <CookieForm
+                    initialValues={cookieToFormValues(item)}
+                    onSubmit={(values) => {
+                      void handleUpdate(item, values);
+                    }}
+                    onDelete={() => {
+                      void deleteCookie(item);
+                    }}
+                  />
+                }
               />
             ))}
           </CardContent>

@@ -59,7 +59,7 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          'relative z-100 max-h-60 min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md pointer-events-auto data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+          'relative z-popover max-h-60 min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md pointer-events-auto data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           position === 'popper' &&
             'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
           className,
@@ -197,6 +197,8 @@ interface SelectFieldProps<T extends SelectOption> {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  id?: string;
+  'aria-invalid'?: boolean;
   getOptionValue?: (option: T) => string;
   renderOption?: (option: T) => React.ReactNode;
 }
@@ -207,6 +209,8 @@ export function Select<T extends SelectOption>({
   placeholder = 'Select...',
   disabled,
   className,
+  id,
+  'aria-invalid': ariaInvalid,
   getOptionValue = (option) => option.value,
   renderOption,
 }: SelectFieldProps<T>) {
@@ -222,7 +226,11 @@ export function Select<T extends SelectOption>({
       onValueChange={onValueChange}
       disabled={disabled}
     >
-      <SelectTrigger className={cn(className)}>
+      <SelectTrigger
+        id={id}
+        aria-invalid={ariaInvalid}
+        className={cn(className)}
+      >
         <SelectValue placeholder={placeholder}>
           {selectedOption ? render(selectedOption) : null}
         </SelectValue>
