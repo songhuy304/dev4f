@@ -10,6 +10,8 @@ export const PATHS = {
   RESPONSIVE_VIEWER: `${TOOLS_PATH}/responsive-viewer`,
   STORAGE_MANAGER: `${TOOLS_PATH}/storage-manager`,
   EXTRACT_IMAGES: `${TOOLS_PATH}/extract-images`,
+  FORMAT_JSON: `${TOOLS_PATH}/format-json`,
+  TEXT_COMPARE: `${TOOLS_PATH}/text-compare`,
   COLOR_PICKER: `${TOOLS_PATH}/color-picker`,
   SCREENSHOT: `${TOOLS_PATH}/screenshot`,
   LINK_SHORTENER: `${TOOLS_PATH}/link-shortener`,

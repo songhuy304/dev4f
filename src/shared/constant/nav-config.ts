@@ -1,10 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   Book,
+  Braces,
   CalendarClock,
   Camera,
   Coins,
   Database,
+  GitCompare,
   Image,
   KeyRound,
   Link,
@@ -92,6 +94,21 @@ export const NAV_CONFIG: {
           title: 'Extract Images',
           url: `/${PATHS.EXTRACT_IMAGES}`,
           icon: Image,
+          size: 'md',
+        },
+
+        {
+          key: 'format-json',
+          title: 'Format JSON',
+          url: `/${PATHS.FORMAT_JSON}`,
+          icon: Braces,
+          size: 'md',
+        },
+        {
+          key: 'text-compare',
+          title: 'Text compare',
+          url: `/${PATHS.TEXT_COMPARE}`,
+          icon: GitCompare,
           size: 'md',
         },
         {

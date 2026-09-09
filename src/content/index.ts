@@ -4,7 +4,7 @@ import {
   EXT_IFRAME_ID,
   EXT_MESSAGE,
 } from '@/shared/constant/extension';
-import { getAllImageUrls } from '@/modules/extract-images/utils';
+import { getAllPageImages } from '@/modules/extract-images/utils';
 
 function getIframe() {
   return document.getElementById(EXT_IFRAME_ID) as HTMLIFrameElement | null;
@@ -48,6 +48,7 @@ function createIframe() {
   const iframe = document.createElement('iframe');
   iframe.id = EXT_IFRAME_ID;
   iframe.src = chrome.runtime.getURL('src/overlay/index.html');
+  iframe.setAttribute('allow', 'clipboard-write; clipboard-read');
   iframe.setAttribute('allowtransparency', 'true');
   iframe.setAttribute('title', 'Admin dashboard');
 
@@ -117,11 +118,13 @@ window.addEventListener('message', (event) => {
   }
 
   if (event.data?.type === EXT_MESSAGE.GET_PAGE_IMAGES) {
+    const images = getAllPageImages();
     iframe.contentWindow?.postMessage(
       {
         type: EXT_MESSAGE.PAGE_IMAGES,
         requestId: event.data.requestId,
-        urls: getAllImageUrls(),
+        images,
+        urls: images.map((item) => item.url),
       },
       '*',
     );
