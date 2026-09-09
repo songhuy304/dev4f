@@ -17,6 +17,7 @@ export const routes: RouteObject = {
     { path: PATHS.CURRENCY_CONVERTER, element: <Pages.CurrencyConverterPage /> },
     { path: PATHS.STORAGE_MANAGER, element: <Pages.BrowserStoragePage /> },
     { path: PATHS.EXTRACT_IMAGES, element: <Pages.ExtractImagesPage /> },
+    { path: PATHS.SETTINGS, element: <Pages.SettingsPage /> },
     { path: '*', element: <PageSystem.NotFoundPage /> },
   ] as RouteObject[],
 };

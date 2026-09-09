@@ -57,29 +57,9 @@ const DateConverter = () => {
   return (
     <div className="flex flex-col gap-4 mt-6">
       <div className="space-y-2">
-        <Label>Input timezone</Label>
-        <ButtonGroup>
-          <Button
-            type="button"
-            variant={inputTimezone === 'local' ? 'default' : 'outline'}
-            onClick={() => handleTimezoneChange('local')}
-          >
-            Local
-          </Button>
-          <Button
-            type="button"
-            variant={inputTimezone === 'utc' ? 'default' : 'outline'}
-            onClick={() => handleTimezoneChange('utc')}
-          >
-            UTC
-          </Button>
-        </ButtonGroup>
-      </div>
-
-      <div className="space-y-2">
         <Label>Date & time</Label>
         <div className="flex w-full items-start gap-2">
-          <div className="min-w-0 flex-1">
+          <ButtonGroup className="min-w-0 flex-1 [&>:first-child]:min-w-0 [&>:first-child]:flex-1">
             <DateTimePicker
               value={date}
               onChange={setDate}
@@ -93,11 +73,25 @@ const DateConverter = () => {
                   timezone={timezone}
                   disabled={open}
                   onCalendarClick={() => setOpen(!open)}
-                  className="h-9 w-full"
+                  className="h-9 w-full rounded-r-none"
                 />
               )}
             />
-          </div>
+            <Button
+              type="button"
+              variant={inputTimezone === 'local' ? 'default' : 'outline'}
+              onClick={() => handleTimezoneChange('local')}
+            >
+              Local
+            </Button>
+            <Button
+              type="button"
+              variant={inputTimezone === 'utc' ? 'default' : 'outline'}
+              onClick={() => handleTimezoneChange('utc')}
+            >
+              UTC
+            </Button>
+          </ButtonGroup>
           <Button variant="default" onClick={handleConvert} disabled={!date}>
             Convert
             <ArrowRightIcon className="w-4 h-4" />

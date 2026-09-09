@@ -1,25 +1,22 @@
 import { Pin, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useNavigate, useMatch, useOutlet } from 'react-router-dom';
+import { useMatch, useNavigate, useOutlet } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
-import {
-  findNavItemByToolId,
-  TOOLS_ROUTE,
-  type ToolPanelSize,
-} from '@/shared/constant';
-import { cn } from '@/shared/lib/utils';
+import { findNavItemByToolId, type ToolPanelSize } from '@/shared/constant';
 import { useKeyboard, usePinnedTools } from '@/shared/hooks';
+import { cn } from '@/shared/lib/utils';
 
-import { Kbd } from './ui/kbd';
 import { Badge } from './ui/badge';
+import { Kbd } from './ui/kbd';
 
 const PANEL_SIZE_CLASS: Record<ToolPanelSize, string> = {
   sm: 'w-[min(18rem,calc(100vw-4rem))]',
   md: 'w-[min(22rem,calc(100vw-4rem))]',
   lg: 'w-[min(36rem,calc(100vw-4rem))]',
   '2lg': 'w-[min(48rem,calc(100vw-4rem))]',
+  '3lg': 'w-[min(60rem,calc(100vw-4rem))]',
   full: 'left-2 w-auto',
 };
 
@@ -139,10 +136,6 @@ export function ToolPanel() {
             <span>
               <Kbd className="mr-2">Esc</Kbd>
               close
-            </span>
-
-            <span className="truncate text-sidebar-foreground/40">
-              {TOOLS_ROUTE.DETAIL(toolId)}
             </span>
           </footer>
         </motion.aside>

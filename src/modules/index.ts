@@ -5,3 +5,4 @@ export * from './markdown';
 export * from './currency-converter';
 export * from './browser-storage';
 export * from './extract-images';
+export * from './settings';

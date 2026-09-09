@@ -20,7 +20,7 @@ import {
 
 import { PATHS } from './path';
 
-export type ToolPanelSize = 'sm' | 'md' | 'lg' | '2lg' | 'full';
+export type ToolPanelSize = 'sm' | 'md' | 'lg' | '2lg' | '3lg' | 'full';
 
 export type NavItem = {
   key: string;
@@ -180,9 +180,9 @@ export const NAV_CONFIG: {
     {
       key: 'settings',
       title: 'Settings',
-      url: PATHS.SETTINGS,
+      url: `/${PATHS.SETTINGS}`,
       icon: Settings,
-      size: 'md',
+      size: '3lg',
     },
   ],
 };
@@ -190,13 +190,13 @@ export const NAV_CONFIG: {
 export function findNavItemByToolId(toolId?: string) {
   if (!toolId) return undefined;
 
-  for (const group of NAV_CONFIG.navMain) {
-    const item = group.items?.find((navItem) => {
-      const segments = navItem.url.split('/').filter(Boolean);
-      return segments.at(-1) === toolId;
-    });
-    if (item) return item;
-  }
+  const allItems = [
+    ...NAV_CONFIG.navMain.flatMap((group) => group.items ?? []),
+    ...NAV_CONFIG.navFooter,
+  ];
 
-  return undefined;
+  return allItems.find((navItem) => {
+    const segments = navItem.url.split('/').filter(Boolean);
+    return segments.at(-1) === toolId;
+  });
 }
