@@ -59,7 +59,7 @@ const DateConverter = () => {
       <div className="space-y-2">
         <Label>Date & time</Label>
         <div className="flex w-full items-start gap-2">
-          <ButtonGroup className="min-w-0 flex-1 [&>:first-child]:min-w-0 [&>:first-child]:flex-1">
+          <ButtonGroup className="min-w-0 flex-1 *:first:min-w-0 *:first:flex-1">
             <DateTimePicker
               value={date}
               onChange={setDate}

@@ -8,7 +8,11 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { SETTINGS_TABS, SETTINGS_TABS_MAP, type SettingsTab } from './constants';
+import {
+  SETTINGS_TABS,
+  SETTINGS_TABS_MAP,
+  type SettingsTab,
+} from './constants';
 
 function SettingsSection({ tab }: { tab: SettingsTab }) {
   const { label, description, icon: Icon } = SETTINGS_TABS_MAP[tab];
@@ -39,23 +43,16 @@ function SettingsSection({ tab }: { tab: SettingsTab }) {
 
 const SettingsPage = () => {
   return (
-    <div className="h-full px-4 py-3">
+    <div className="h-full bg-card/40">
       <Tabs
         orientation="vertical"
         className="h-full gap-0"
         defaultValue={SETTINGS_TABS.APPEARANCE}
       >
-        <TabsList
-          variant="line"
-          className="h-auto w-40 shrink-0 items-stretch justify-start gap-0.5 self-stretch rounded-none border-r border-border pr-3"
-        >
+        <TabsList className="h-auto shrink-0 items-stretch justify-start gap-0.5 self-stretch px-6 py-3">
           {Object.entries(SETTINGS_TABS_MAP).map(
             ([value, { label, icon: Icon }]) => (
-              <TabsTrigger
-                key={value}
-                value={value}
-                className="h-auto justify-start gap-2 px-2.5 py-2 text-left"
-              >
+              <TabsTrigger key={value} value={value}>
                 <Icon className="size-3.5 opacity-70" />
                 {label}
               </TabsTrigger>
@@ -63,7 +60,7 @@ const SettingsPage = () => {
           )}
         </TabsList>
 
-        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pl-5">
+        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pl-5 bg-background py-3 px-2">
           {(Object.keys(SETTINGS_TABS_MAP) as SettingsTab[]).map((tab) => (
             <TabsContent key={tab} value={tab} className="mt-0 h-full">
               <SettingsSection tab={tab} />

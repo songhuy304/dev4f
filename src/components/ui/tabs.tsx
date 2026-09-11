@@ -128,11 +128,13 @@ function TabsTrigger({
     >
       {isActive ? (
         variant === 'line' ? (
-          <motion.span
-            layoutId={`${layoutId}-indicator`}
-            className="absolute bg-foreground group-data-[orientation=horizontal]/tabs:inset-x-0 group-data-[orientation=horizontal]/tabs:bottom-[-5px] group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=vertical]/tabs:inset-y-0 group-data-[orientation=vertical]/tabs:-right-1 group-data-[orientation=vertical]/tabs:w-0.5"
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          />
+          <>
+            <motion.span
+              layoutId={`${layoutId}-indicator`}
+              className="absolute bg-foreground group-data-[orientation=horizontal]/tabs:inset-x-0 group-data-[orientation=horizontal]/tabs:bottom-[-5px] group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=vertical]/tabs:inset-y-0 group-data-[orientation=vertical]/tabs:-right-1 group-data-[orientation=vertical]/tabs:w-0.5"
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            />
+          </>
         ) : (
           <motion.span
             layoutId={`${layoutId}-indicator`}

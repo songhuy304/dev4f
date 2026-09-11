@@ -23,9 +23,14 @@ export default defineManifest({
     },
   ],
 
+  content_security_policy: {
+    extension_pages:
+      "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; worker-src 'self';",
+  },
+
   web_accessible_resources: [
     {
-      resources: ['src/overlay/index.html', 'assets/*'],
+      resources: ['src/overlay/index.html', 'assets/*', 'tesseract/*'],
       matches: ['<all_urls>'],
     },
   ],

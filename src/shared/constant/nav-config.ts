@@ -15,6 +15,7 @@ import {
   Ruler,
   Settings,
   StickyNote,
+  Text,
   Zap,
 } from 'lucide-react';
 
@@ -95,6 +96,15 @@ export const NAV_CONFIG: {
           url: `/${PATHS.EXTRACT_IMAGES}`,
           icon: Image,
           size: 'md',
+        },
+
+        {
+          key: 'image-to-text',
+          title: 'Image to Text',
+          url: `/${PATHS.IMAGE_TO_TEXT}`,
+          icon: Text,
+          size: 'lg',
+          isNew: true,
         },
 
         {
@@ -187,16 +197,23 @@ export const NAV_CONFIG: {
   ],
 };
 
-export function findNavItemByToolId(toolId?: string) {
-  if (!toolId) return undefined;
-
-  const allItems = [
+function getAllNavItems() {
+  return [
     ...NAV_CONFIG.navMain.flatMap((group) => group.items ?? []),
     ...NAV_CONFIG.navFooter,
   ];
+}
 
-  return allItems.find((navItem) => {
+export function findNavItemByToolId(toolId?: string) {
+  if (!toolId) return undefined;
+
+  return getAllNavItems().find((navItem) => {
     const segments = navItem.url.split('/').filter(Boolean);
     return segments.at(-1) === toolId;
   });
+}
+
+export function findNavItemByUrl(url?: string) {
+  if (!url) return undefined;
+  return getAllNavItems().find((navItem) => navItem.url === url);
 }

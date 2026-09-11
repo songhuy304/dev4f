@@ -6,6 +6,8 @@ import {
 } from '@/shared/constant/extension';
 import { getAllPageImages } from '@/modules/extract-images/utils';
 
+import { startRegionCapture } from './region-capture';
+
 function getIframe() {
   return document.getElementById(EXT_IFRAME_ID) as HTMLIFrameElement | null;
 }
@@ -97,11 +99,26 @@ function setOverlayOpen(open: boolean) {
     iframe.style.top = '0';
     iframe.style.transform = 'none';
   }
+
+  const notifyOpened = () => {
+    iframe.contentWindow?.postMessage(
+      { type: EXT_MESSAGE.OVERLAY_OPENED },
+      '*',
+    );
+  };
+
+  // Fresh iframe needs load before the overlay app can receive the message.
+  if (!existing) {
+    iframe.addEventListener('load', notifyOpened, { once: true });
+  } else {
+    notifyOpened();
+  }
 }
 
 function toggleOverlay() {
   const iframe = getIframe();
-  const isOpen = iframe?.dataset.open === '1' && iframe.style.display !== 'none';
+  const isOpen =
+    iframe?.dataset.open === '1' && iframe.style.display !== 'none';
   setOverlayOpen(!isOpen);
 }
 
@@ -110,6 +127,85 @@ chrome.runtime.onMessage.addListener((message) => {
     toggleOverlay();
   }
 });
+
+function waitForPaint() {
+  return new Promise<void>((resolve) => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(resolve, 50);
+      });
+    });
+  });
+}
+
+function captureVisibleTab(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      { type: EXT_MESSAGE.CAPTURE_VISIBLE_TAB },
+      (response: { dataUrl?: string; error?: string } | undefined) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+
+        if (!response?.dataUrl) {
+          reject(new Error(response?.error ?? 'Capture failed'));
+          return;
+        }
+
+        resolve(response.dataUrl);
+      },
+    );
+  });
+}
+
+async function handleRegionCapture(
+  iframe: HTMLIFrameElement,
+  requestId: string,
+) {
+  const previousDisplay = iframe.style.display;
+  iframe.style.display = 'none';
+
+  try {
+    await waitForPaint();
+    const screenshotDataUrl = await captureVisibleTab();
+
+    startRegionCapture({
+      screenshotDataUrl,
+      onComplete: (croppedDataUrl) => {
+        iframe.style.display = previousDisplay || 'block';
+        iframe.contentWindow?.postMessage(
+          {
+            type: EXT_MESSAGE.REGION_CAPTURE_RESULT,
+            requestId,
+            dataUrl: croppedDataUrl,
+          },
+          '*',
+        );
+      },
+      onCancel: () => {
+        iframe.style.display = previousDisplay || 'block';
+        iframe.contentWindow?.postMessage(
+          {
+            type: EXT_MESSAGE.REGION_CAPTURE_CANCELLED,
+            requestId,
+          },
+          '*',
+        );
+      },
+    });
+  } catch (error) {
+    iframe.style.display = previousDisplay || 'block';
+    iframe.contentWindow?.postMessage(
+      {
+        type: EXT_MESSAGE.REGION_CAPTURE_CANCELLED,
+        requestId,
+        error: error instanceof Error ? error.message : 'Capture failed',
+      },
+      '*',
+    );
+  }
+}
 
 window.addEventListener('message', (event) => {
   const iframe = getIframe();
@@ -128,6 +224,11 @@ window.addEventListener('message', (event) => {
       },
       '*',
     );
+    return;
+  }
+
+  if (event.data?.type === EXT_MESSAGE.START_REGION_CAPTURE) {
+    void handleRegionCapture(iframe, String(event.data.requestId ?? ''));
     return;
   }
 

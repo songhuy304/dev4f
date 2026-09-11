@@ -112,4 +112,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true;
   }
+
+  if (message.type === EXT_MESSAGE.CAPTURE_VISIBLE_TAB) {
+    const windowId = sender.tab?.windowId;
+
+    chrome.tabs.captureVisibleTab(
+      windowId ?? chrome.windows.WINDOW_ID_CURRENT,
+      { format: 'png' },
+      (dataUrl) => {
+        if (chrome.runtime.lastError || !dataUrl) {
+          sendResponse({
+            error: chrome.runtime.lastError?.message ?? 'Failed to capture tab',
+          });
+          return;
+        }
+
+        sendResponse({ dataUrl });
+      },
+    );
+
+    return true;
+  }
 });

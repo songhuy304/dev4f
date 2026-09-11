@@ -1,3 +1,8 @@
+import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Typography } from '@/components/ui/typography';
+import { useCopyToClipboard } from '@/shared/hooks/use-copy-clipboard';
+import { useDownload } from '@/shared/hooks/use-download';
 import {
   Check,
   Columns2,
@@ -6,11 +11,6 @@ import {
   PanelLeft,
   PanelRight,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { Typography } from '@/components/ui/typography';
-import { useCopyToClipboard } from '@/shared/hooks/use-copy-clipboard';
-import { useDownload } from '@/shared/hooks/use-download';
 import { ViewMode } from './types';
 
 interface MarkdownHeaderProps {
@@ -33,15 +33,8 @@ const MarkdownHeader = ({
     void copy(value);
   };
 
-  const handleDownload = async () => {
-    const blob = new Blob([value], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-
-    try {
-      downloadMarkdown('markdown.md', url);
-    } finally {
-      URL.revokeObjectURL(url);
-    }
+  const handleDownload = () => {
+    downloadMarkdown(value, 'markdown');
   };
 
   return (
