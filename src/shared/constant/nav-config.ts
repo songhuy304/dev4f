@@ -13,9 +13,9 @@ import {
   Palette,
   QrCode,
   Ruler,
+  ScanText,
   Settings,
   StickyNote,
-  Text,
   Zap,
 } from 'lucide-react';
 
@@ -102,7 +102,7 @@ export const NAV_CONFIG: {
           key: 'image-to-text',
           title: 'Image to Text',
           url: `/${PATHS.IMAGE_TO_TEXT}`,
-          icon: Text,
+          icon: ScanText,
           size: 'lg',
           isNew: true,
         },
@@ -192,7 +192,7 @@ export const NAV_CONFIG: {
       title: 'Settings',
       url: `/${PATHS.SETTINGS}`,
       icon: Settings,
-      size: '3lg',
+      size: '2lg',
     },
   ],
 };

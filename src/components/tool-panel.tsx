@@ -26,7 +26,7 @@ export function ToolPanel() {
   const toolId = match?.params.toolId;
 
   const { hasPinnedTool, togglePinnedTool } = usePinnedTools();
-  const { state } = useSidebar();
+  const { state, side: sidePosition } = useSidebar();
 
   const isCollapsed = state === 'collapsed';
 
@@ -74,10 +74,16 @@ export function ToolPanel() {
           className={cn(
             'fixed top-2 bottom-2 z-20 flex flex-col overflow-hidden rounded-2xl border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-lg',
             PANEL_SIZE_CLASS[size],
-            isCollapsed
-              ? 'right-14'
-              : 'right-[calc(var(--sidebar-width)+0.5rem)]',
-            isFull && 'left-2',
+
+            sidePosition === 'left'
+              ? isCollapsed
+                ? 'left-14'
+                : 'left-[calc(var(--sidebar-width)+0.5rem)]'
+              : isCollapsed
+                ? 'right-14'
+                : 'right-[calc(var(--sidebar-width)+0.5rem)]',
+
+            isFull && 'left-2 right-2',
           )}
         >
           <header
@@ -85,7 +91,7 @@ export function ToolPanel() {
               'relative isolate flex shrink-0 items-center justify-between gap-2',
               'border-b border-sidebar-border px-4 py-3',
               'before:absolute before:inset-x-0 before:top-0 before:bottom-px before:-z-10',
-              'before:bg-linear-to-b before:from-[#424247] before:to-transparent before:to-60%',
+              'dark:before:bg-linear-to-b dark:before:from-[#424247] dark:before:to-transparent dark:before:to-60%',
             )}
           >
             <div className="flex min-w-0 items-center gap-2">

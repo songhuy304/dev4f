@@ -29,30 +29,25 @@ const ExtractImagesHeader = ({
 
   return (
     <div className="flex items-center justify-between gap-3">
-      <Typography variant="small" className="text-muted-foreground">
-        {total} {total === 1 ? 'item' : 'items'}
-        {selectedCount > 0 ? ` · ${selectedCount} selected` : ''}
-      </Typography>
-
+      <div className="flex items-center gap-2 ">
+        <Checkbox
+          id={selectAllId}
+          checked={
+            allSelected ? true : partiallySelected ? 'indeterminate' : false
+          }
+          disabled={total === 0}
+          onCheckedChange={(value) => onSelectAllChange(value === true)}
+        />
+        <Typography variant="p" className="text-xs text-muted-foreground">
+          {total} {total === 1 ? 'item' : 'items'}
+          {selectedCount > 0 ? ` · ${selectedCount} selected` : ''}
+        </Typography>
+      </div>
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id={selectAllId}
-            checked={
-              allSelected ? true : partiallySelected ? 'indeterminate' : false
-            }
-            disabled={total === 0}
-            onCheckedChange={(value) => onSelectAllChange(value === true)}
-          />
-          <Label htmlFor={selectAllId} className="text-xs font-normal">
-            Select All
-          </Label>
-        </div>
-
         <Button
           type="button"
-          size="sm"
-          variant="secondary"
+          size="xs"
+          variant="default"
           tooltip="Download as zip"
           disabled={selectedCount === 0 || isDownloading}
           onClick={onDownloadZip}

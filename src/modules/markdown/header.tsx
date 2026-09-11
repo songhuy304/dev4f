@@ -1,16 +1,9 @@
 import { Button } from '@/components/ui/button';
+import { ButtonCopy } from '@/components/ui/button-copy';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Typography } from '@/components/ui/typography';
-import { useCopyToClipboard } from '@/shared/hooks/use-copy-clipboard';
 import { useDownload } from '@/shared/hooks/use-download';
-import {
-  Check,
-  Columns2,
-  Copy,
-  Download,
-  PanelLeft,
-  PanelRight,
-} from 'lucide-react';
+import { Columns2, Download, PanelLeft, PanelRight } from 'lucide-react';
 import { ViewMode } from './types';
 
 interface MarkdownHeaderProps {
@@ -26,12 +19,7 @@ const MarkdownHeader = ({
   viewMode,
   onViewModeChange,
 }: MarkdownHeaderProps) => {
-  const [copiedText, copy] = useCopyToClipboard();
   const { downloadMarkdown, isDownloading } = useDownload();
-
-  const handleCopy = () => {
-    void copy(value);
-  };
 
   const handleDownload = () => {
     downloadMarkdown(value, 'markdown');
@@ -58,15 +46,7 @@ const MarkdownHeader = ({
         >
           <Download />
         </Button>
-        <Button
-          type="button"
-          size="icon-xs"
-          variant="outline"
-          tooltip={copiedText ? 'Copied' : 'Copy'}
-          onClick={handleCopy}
-        >
-          {copiedText ? <Check /> : <Copy />}
-        </Button>
+        <ButtonCopy size="icon-xs" content={value} justIcon variant="outline" />
 
         <ButtonGroup>
           <Button
@@ -74,6 +54,7 @@ const MarkdownHeader = ({
             size="icon-xs"
             variant="outline"
             tooltip="Markdown view"
+            className="text-muted-foreground text"
             aria-pressed={viewMode === ViewMode.LEFT}
             onClick={() => onViewModeChange(ViewMode.LEFT)}
           >
@@ -84,6 +65,7 @@ const MarkdownHeader = ({
             size="icon-xs"
             variant="outline"
             tooltip="Split"
+            className="text-muted-foreground"
             aria-pressed={viewMode === ViewMode.SPLIT}
             onClick={() => onViewModeChange(ViewMode.SPLIT)}
           >
@@ -94,6 +76,7 @@ const MarkdownHeader = ({
             size="icon-xs"
             variant="outline"
             tooltip="Preview view"
+            className="text-muted-foreground"
             aria-pressed={viewMode === ViewMode.RIGHT}
             onClick={() => onViewModeChange(ViewMode.RIGHT)}
           >

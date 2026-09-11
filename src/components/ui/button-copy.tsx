@@ -4,6 +4,7 @@ import { Button, ButtonProps } from '@/components/ui/button';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'motion/react';
 import { useCopyToClipboard } from '@/shared/hooks/use-copy-clipboard';
+import { cn } from '@/shared/lib/utils';
 
 const MotionCopyIcon = motion.create(CopyIcon);
 const MotionCheckIcon = motion.create(CheckIcon);
@@ -30,9 +31,16 @@ const checkIconVariants = {
 interface ButtonCopyProps extends Omit<ButtonProps, 'children'> {
   content: string;
   text?: string;
+  justIcon?: boolean;
 }
 
-const ButtonCopy = ({ content, text = 'Copy', ...props }: ButtonCopyProps) => {
+const ButtonCopy = ({
+  content,
+  text = 'Copy',
+  justIcon = false,
+  className,
+  ...props
+}: ButtonCopyProps) => {
   const [copied, copy] = useCopyToClipboard();
 
   const handleCopy = async () => {
@@ -41,7 +49,7 @@ const ButtonCopy = ({ content, text = 'Copy', ...props }: ButtonCopyProps) => {
 
   return (
     <Button
-      className="relative min-w-22.5 overflow-hidden"
+      className={cn('relative overflow-hidden hover:text-white!', className)}
       onClick={handleCopy}
       disabled={!!copied}
       {...props}
@@ -57,12 +65,12 @@ const ButtonCopy = ({ content, text = 'Copy', ...props }: ButtonCopyProps) => {
             className="inline-flex items-center gap-1.5 text-green-300"
           >
             <MotionCheckIcon
-              className="size-3.5 stroke-green-300"
+              className="stroke-green-300"
               variants={checkIconVariants as Variants}
               initial="initial"
               animate="animate"
             />
-            Copied!
+            {justIcon ? null : 'Copied!'}
           </motion.span>
         ) : (
           <motion.span
@@ -75,11 +83,10 @@ const ButtonCopy = ({ content, text = 'Copy', ...props }: ButtonCopyProps) => {
             className="inline-flex items-center gap-1.5"
           >
             <MotionCopyIcon
-              className="size-3.5"
               variants={copyIconVariants as Variants}
               initial="initial"
             />
-            {text}
+            {justIcon ? null : text}
           </motion.span>
         )}
       </AnimatePresence>

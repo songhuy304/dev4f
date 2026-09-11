@@ -20,8 +20,13 @@ import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { cn } from '@/shared/lib/utils';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Badge } from './badge';
+import {} from 'js-cookie';
+import { getCookie } from '@/shared/utils';
+
+type SidebarSide = 'left' | 'right';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
+const SIDEBAR_POSITION_COOKIE_NAME = 'sidebar_position';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = '13rem';
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
@@ -34,6 +39,8 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  side: SidebarSide;
+  setSidebarPosition: (position: SidebarSide) => void;
 };
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
@@ -60,8 +67,10 @@ function SidebarProvider({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
+  const sideCookie = getCookie<SidebarSide>(SIDEBAR_POSITION_COOKIE_NAME);
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
+  const [side, setSide] = React.useState<SidebarSide>(sideCookie ?? 'left');
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -82,12 +91,10 @@ function SidebarProvider({
     [setOpenProp, open],
   );
 
-  // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile]);
 
-  // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -107,6 +114,11 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? 'expanded' : 'collapsed';
 
+  const setSidebarPosition = React.useCallback((position: 'left' | 'right') => {
+    document.cookie = `${SIDEBAR_POSITION_COOKIE_NAME}=${position}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+    setSide(position);
+  }, []);
+
   const contextValue = React.useMemo<SidebarContextProps>(
     () => ({
       state,
@@ -116,8 +128,20 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      setSidebarPosition,
+      side,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+      setSidebarPosition,
+      side,
+    ],
   );
 
   return (
@@ -142,7 +166,7 @@ function SidebarProvider({
 }
 
 function Sidebar({
-  side = 'left',
+  side = 'right',
   variant = 'sidebar',
   className,
   children,

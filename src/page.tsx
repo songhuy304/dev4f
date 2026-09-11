@@ -1,11 +1,14 @@
 import React from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routers';
+import { ThemeProvider } from './components/themes/theme-provider';
 
 const Page = () => {
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
-      <RouterProvider router={router} />
+      <ThemeProvider defaultTheme="dark">
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </React.Suspense>
   );
 };
