@@ -28,7 +28,7 @@ import { ScrollFadeEffect } from './ui/scroll-fade';
 import { Separator } from './ui/separator';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { state, toggleSidebar, side: sidePosition } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const { hasPinnedTool, navPin } = usePinnedTools();
   const pinnedGroup = navPin();
 
@@ -96,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar variant="floating" side={sidePosition} {...props}>
+    <Sidebar variant="floating" side={"right"} {...props}>
       {/* ==================== HEADER ==================== */}
       <SidebarHeader>
         <SidebarMenu>

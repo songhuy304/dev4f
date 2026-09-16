@@ -94,12 +94,12 @@ const AppearanceTab = () => {
           >
             <SwitchAccentColor />
           </CardRow>
-          <CardRow
+          {/* <CardRow
             title="Sidebar position"
             description="Determines where the navigation sidebar is anchored within the layout"
           >
             <TogglePosition />
-          </CardRow>
+          </CardRow> */}
         </CardContent>
       </Card>
     </div>

@@ -67,10 +67,9 @@ function SidebarProvider({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const sideCookie = getCookie<SidebarSide>(SIDEBAR_POSITION_COOKIE_NAME);
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
-  const [side, setSide] = React.useState<SidebarSide>(sideCookie ?? 'left');
+  const [side, setSide] = React.useState<SidebarSide>('right');
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.

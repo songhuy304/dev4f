@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Kbd } from '@/components/ui/kbd';
 import { THEMES } from './theme-config';
 import { Palette } from 'lucide-react';
 import { useTheme } from './theme-provider';
@@ -40,7 +39,7 @@ export function ThemeSelector() {
               <SelectGroup>
                 <SelectLabel>Themes</SelectLabel>
                 {THEMES.map((theme) => (
-                  <SelectItem key={theme.name} value={theme.value}>
+                  <SelectItem key={theme.name} value={theme.value ?? ''}>
                     {theme.name}
                   </SelectItem>
                 ))}
