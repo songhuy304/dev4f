@@ -30,6 +30,55 @@ export const ACCENT_COLORS = {
   },
 } as const;
 
+export const DEFAULT_THEME = 'vercel';
+
+export const THEMES = [
+  // {
+  //   name: 'Neutral',
+  //   value: 'neutral',
+  // },
+  // {
+  //   name: 'Claude',
+  //   value: 'claude',
+  // },
+  // {
+  //   name: 'Neobrutualism',
+  //   value: 'neobrutualism',
+  // },
+  // {
+  //   name: 'Supabase',
+  //   value: 'supabase',
+  // },
+  {
+    name: 'Vercel',
+    value: 'vercel',
+  },
+  {
+    name: 'Mono',
+    value: 'mono',
+  },
+  // {
+  //   name: 'Notebook',
+  //   value: 'notebook',
+  // },
+  // {
+  //   name: 'Light Green',
+  //   value: 'light-green',
+  // },
+  // {
+  //   name: 'Zen',
+  //   value: 'zen',
+  // },
+  // {
+  //   name: 'Astro Vista',
+  //   value: 'astro-vista',
+  // },
+  // {
+  //   name: 'WhatsApp',
+  //   value: 'whatsapp',
+  // },
+];
+
 export type AccentColor = keyof typeof ACCENT_COLORS;
 export const DEFAULT_ACCENT_COLOR: AccentColor = 'purple';
 export const ACCENT_COLORS_KEY = 'accent_color';

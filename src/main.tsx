@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client';
 import Logger, { type LoggerCls } from '@ezuikit/utils-logger';
 import Page from './page';
 import '@/i18n/i18n';
-import './index.css';
+import './styles/index.css';
 import { ErrorBoundary } from './components/pages';
 
 const logger: LoggerCls = Logger({

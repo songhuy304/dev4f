@@ -8,6 +8,7 @@ import { cn } from '@/shared/lib/utils';
 import { SETTINGS_TABS } from '../constants';
 import { CardRow } from './card-row';
 import SettingsSection from './setting-section';
+import { ThemeSelector } from '@/components/themes/theme-selector';
 
 const SwitchAccentColor = () => {
   const { accentColor, setAccentColor } = useAccentColor();
@@ -84,7 +85,9 @@ const AppearanceTab = () => {
           <CardRow
             title="Theme"
             description="Controls the overall visual language, including surfaces, text, borders, and color tokens"
-          />
+          >
+            <ThemeSelector />
+          </CardRow>
           <CardRow
             title="Accent color"
             description="Sets the highlight color used for active states"

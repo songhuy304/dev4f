@@ -1,67 +1,104 @@
-import { localStorage } from '@/shared/utils';
+'use client';
+
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'dark' | 'light';
+import { localStorage } from '@/shared/utils';
+import { DEFAULT_THEME } from '../themes/theme-config';
+
+type ThemeMode = 'dark' | 'light';
 
 type ThemeProviderProps = {
   children: React.ReactNode;
-  defaultTheme?: Theme;
+  defaultTheme?: ThemeMode;
+  initialActiveTheme?: string;
   storageKey?: string;
 };
 
 type ThemeProviderState = {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+
+  activeTheme: string;
+  setActiveTheme: (theme: string) => void;
 };
 
 const initialState: ThemeProviderState = {
   theme: 'dark',
   setTheme: () => null,
+
+  activeTheme: DEFAULT_THEME,
+  setActiveTheme: () => null,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
+const ACTIVE_THEME_COOKIE = 'active_theme';
+
+function setThemeCookie(theme: string) {
+  document.cookie = [
+    `${ACTIVE_THEME_COOKIE}=${theme}`,
+    'path=/',
+    'max-age=31536000',
+    'SameSite=Lax',
+  ].join('; ');
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = 'dark',
+  initialActiveTheme = DEFAULT_THEME,
   storageKey = 'vite-ui-theme',
-  ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => localStorage.get<Theme>(storageKey) ?? defaultTheme,
+  const [theme, setThemeState] = useState<ThemeMode>(
+    () => localStorage.get<ThemeMode>(storageKey) ?? defaultTheme,
   );
+
+  const [activeTheme, setActiveThemeState] = useState(initialActiveTheme);
+
+  /**
+   * Dark / Light
+   */
   useEffect(() => {
-    const root = window.document.documentElement;
+    const root = document.documentElement;
 
     root.classList.remove('light', 'dark');
+    root.classList.add(theme);
 
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.add('light');
-    }
-  }, [theme]);
+    localStorage.set(storageKey, theme);
+  }, [theme, storageKey]);
 
-  const value = {
+  /**
+   * Color / UI theme
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+
+    root.setAttribute('data-theme', activeTheme);
+
+    setThemeCookie(activeTheme);
+  }, [activeTheme]);
+
+  const value: ThemeProviderState = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.set<Theme>(storageKey, theme);
-      setTheme(theme);
+
+    setTheme: (nextTheme) => {
+      setThemeState(nextTheme);
+    },
+
+    activeTheme,
+
+    setActiveTheme: (nextTheme) => {
+      setActiveThemeState(nextTheme);
     },
   };
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider value={value}>
       {children}
     </ThemeProviderContext.Provider>
   );
 }
 
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
-
-  if (context === undefined)
-    throw new Error('useTheme must be used within a ThemeProvider');
-
-  return context;
-};
+export function useTheme() {
+  return useContext(ThemeProviderContext);
+}
